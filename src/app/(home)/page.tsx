@@ -125,30 +125,35 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="sticky top-16 bg-white shadow-md z-10 px-4 w-full flex justify-between items-center py-8">
-        <div className="w-1/2 pr-4">
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-            fetchPostsWithSearch={fetchPostsWithSearch}
-          />
-        </div>
-        {user && (
-          <div className="flex justify-end">
-            <button
-              onClick={handleCreatePost}
-              className="bg-purple-600 text-white py-2 px-6 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-all duration-300"
-            >
-              Create Post
-            </button>
+      {/* Sticky Header */}
+      <div className="sticky top-16 bg-white shadow-md z-10 px-4 w-full py-4">
+        <div className="w-full flex justify-between items-center max-w-7xl mx-auto">
+          <div className="w-1/2 pr-4">
+            <SearchBar
+              search={search}
+              setSearch={setSearch}
+              fetchPostsWithSearch={fetchPostsWithSearch}
+            />
           </div>
-        )}
+          {user && (
+            <div className="flex justify-end">
+              <button
+                onClick={handleCreatePost}
+                className="bg-purple-600 text-white py-2 px-6 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-all duration-300"
+              >
+                Create Post
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="pt-20 flex flex-col h-full justify-between flex-1 py-8">
-        <div className="px-4 w-full max-w-4xl">
+      {/* Main Content Area */}
+      <div className="pt-20 flex flex-col min-h-screen justify-between">
+        {/* Tab Section */}
+        <div className="w-full max-w-4xl px-4">
           <div className="border-b border-gray-300">
-            <div className="flex">
+            <div className="flex justify-start">
               <button
                 onClick={() => handleTabChange("allPosts")}
                 className={`py-2 px-4 text-center font-semibold text-sm rounded-t-lg transition-all duration-300 border-b-2 ${
@@ -175,7 +180,8 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col flex-1 items-start w-full mt-4">
+        {/* Post Cards Section */}
+        <div className="flex-grow w-full flex flex-col items-start">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-4 p-4">
               {[1, 2, 3].map((n) => (
@@ -205,15 +211,17 @@ const HomePage = () => {
               )}
             </div>
           )}
+          <div className="w-full px-4 mt-4">
+            {!loading && posts?.length > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={pagination?.totalPages}
+                onPageChange={handlePageChange}
+                onLimitChange={handleLimitChange}
+              />
+            )}
+          </div>
         </div>
-        {!loading && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={pagination?.totalPages}
-            onPageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-          />
-        )}
       </div>
     </>
   );
