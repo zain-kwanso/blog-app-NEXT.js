@@ -1,7 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
+
 import { CommentResponse } from "../../@types/comment";
-import { backend_url, url } from "@/utils/URL";
+import { url } from "@/utils/URL";
+import axiosInstance from "@/utils/axiosInstance";
 
 const useFetchComments = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -12,8 +13,8 @@ const useFetchComments = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get<CommentResponse>(
-        backend_url + url.posts + `/${postId}/comments`
+      const response = await axiosInstance.get<CommentResponse>(
+        url.posts + `/${postId}/comments`
       );
       setComments(response.data);
     } catch (err) {

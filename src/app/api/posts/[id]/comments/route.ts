@@ -14,12 +14,12 @@ export async function GET(
   try {
     const comments = await getPostCommentsService(postId);
 
-    if (!comments.length) {
-      return NextResponse.json(
-        { error: "Post not found or no comments" },
-        { status: 404 }
-      );
-    }
+    // if (!comments.length) {
+    //   return NextResponse.json(
+    //     { error: "Post not found or no comments" },
+    //     { status: 404 }
+    //   );
+    // }
 
     return NextResponse.json(comments, { status: 200 });
   } catch (error: unknown) {

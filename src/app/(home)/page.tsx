@@ -1,24 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import Pagination from "@/components/Pagination";
+import Swal from "sweetalert2";
 import SearchBar from "@/components/SearchBar";
 import PostCard from "@/components/PostCard";
 import useFetchAllPosts from "@/hooks/useFetchAllPost";
 import { Post } from "../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
+import Skeleton from "@/components/Skeleton";
+import { AuthContext } from "@/context/authContext";
+import useDeletePost from "@/hooks/useDeletePost";
+import { toast } from "react-toastify";
 
 const HomePage = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState("allPosts");
   const { posts, pagination, loading, fetchAllPosts } = useFetchAllPosts();
-  const { navigateToPreviewPostPage } = useCustomNavigation();
+  const {
+    navigateToPreviewPostPage,
+    navigateToCreatePostPage,
+    navigateToEditPostPage,
+  } = useCustomNavigation();
+  const { user } = useContext(AuthContext);
+  const { deletePost, error } = useDeletePost();
 
   useEffect(() => {
-    fetchAllPosts({ page: currentPage, limit: itemsPerPage, search });
-  }, [currentPage, itemsPerPage]);
+    if (activeTab === "userPosts") {
+      fetchAllPosts({
+        page: currentPage,
+        limit: itemsPerPage,
+        search,
+        userId: user?.id,
+      });
+    } else {
+      fetchAllPosts({ page: currentPage, limit: itemsPerPage, search });
+    }
+  }, [currentPage, itemsPerPage, activeTab]);
 
   const router = useRouter();
 
@@ -35,6 +56,56 @@ const HomePage = () => {
     router.push(`/?page=1&limit=${newLimit}&search=${search}`);
   };
 
+  const handleDeletePost = async (postId: number) => {
+    if (!user) return;
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      await deletePost(postId);
+      if (error) {
+        toast.error(error);
+      } else {
+        toast.success("Post deleted successfully!");
+      }
+      fetchAllPosts({
+        page: currentPage,
+        limit: itemsPerPage,
+        search: search,
+      });
+    }
+  };
+
+  const handleCreatePost = () => {
+    navigateToCreatePostPage();
+  };
+
+  const handleEditPost = (post: Post) => {
+    if (user) {
+      navigateToEditPostPage(post.id!);
+    } else {
+      toast.error("Please log in to edit posts.");
+    }
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === "userPosts") {
+      router.push("?filter=user");
+    } else if (tab === "allPosts") {
+      router.push("/");
+    }
+    setCurrentPage(1);
+  };
+
   const fetchPostsWithSearch = async (debouncedSearch: string) => {
     setSearch(debouncedSearch);
 
@@ -42,7 +113,7 @@ const HomePage = () => {
       fetchAllPosts({
         page: currentPage,
         limit: itemsPerPage,
-        search: debouncedSearch,
+        search,
       });
     } else {
       setCurrentPage(1);
@@ -62,33 +133,87 @@ const HomePage = () => {
             fetchPostsWithSearch={fetchPostsWithSearch}
           />
         </div>
+        {user && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleCreatePost}
+              className="bg-purple-600 text-white py-2 px-6 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-all duration-300"
+            >
+              Create Post
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="pt-20 flex flex-col h-full justify-between flex-1 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-4 p-4">
-          {posts.length === 0 ? (
-            <div className="col-span-full text-center text-gray-500 text-lg mt-10">
-              {search
-                ? `No posts found matching "${search}".`
-                : "No posts available. Please check back later or create a new post."}
+        <div className="px-4 w-full max-w-4xl">
+          <div className="border-b border-gray-300">
+            <div className="flex">
+              <button
+                onClick={() => handleTabChange("allPosts")}
+                className={`py-2 px-4 text-center font-semibold text-sm rounded-t-lg transition-all duration-300 border-b-2 ${
+                  activeTab === "allPosts"
+                    ? "border-purple-600 bg-white text-purple-600"
+                    : "border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                All Posts
+              </button>
+              {user && (
+                <button
+                  onClick={() => handleTabChange("userPosts")}
+                  className={`py-2 px-4 text-center font-semibold text-sm rounded-t-lg transition-all duration-300 border-b-2 ${
+                    activeTab === "userPosts"
+                      ? "border-purple-600 bg-white text-purple-600"
+                      : "border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  My Posts
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col flex-1 items-start w-full mt-4">
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-4 p-4">
+              {[1, 2, 3].map((n) => (
+                <Skeleton key={n} />
+              ))}
             </div>
           ) : (
-            posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onClick={handlePostClick}
-                isUserPost={false}
-              />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-4 p-4">
+              {posts?.length === 0 ? (
+                <div className="col-span-full text-center text-gray-500 text-lg mt-10">
+                  {search
+                    ? `No posts found matching "${search}".`
+                    : "No posts available. Please check back later or create a new post."}
+                </div>
+              ) : (
+                posts?.map((post) => (
+                  <PostCard
+                    key={post?.id}
+                    post={post}
+                    onClick={handlePostClick}
+                    onDelete={handleDeletePost}
+                    onEdit={handleEditPost}
+                    isUserPost={post.UserId === user?.id}
+                    isAdmin={user?.isAdmin!}
+                  />
+                ))
+              )}
+            </div>
           )}
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={pagination?.totalPages}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-        />
+        {!loading && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pagination?.totalPages}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+          />
+        )}
       </div>
     </>
   );

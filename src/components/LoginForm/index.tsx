@@ -1,25 +1,17 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { toast } from "react-toastify";
-
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { UserLoginAttributes } from "../../../@types/user";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginValidationSchema } from "@/validation/validationSchema";
+import { useContext } from "react";
+import { AuthContext } from "@/context/authContext";
 
 const LoginForm: React.FC = (): React.JSX.Element => {
   const { navigateToHomePage } = useCustomNavigation();
-
-  // For demo purposes, the signin function is just a placeholder.
-  const signin = async (email: string, password: string) => {
-    if (email === "default@example.com" && password === "password123") {
-      return Promise.resolve("Success");
-    } else {
-      return Promise.reject("Invalid Credentials");
-    }
-  };
+  const { signin } = useContext(AuthContext);
 
   const defaultLoginValues: UserLoginAttributes = {
     email: "default@example.com",
@@ -37,7 +29,7 @@ const LoginForm: React.FC = (): React.JSX.Element => {
 
   const onSubmit: SubmitHandler<UserLoginAttributes> = async (data) => {
     try {
-      await signin(data.email, data.password);
+      await signin(data.email, data.password); // Call signin from context
       toast.success("Login successful!");
       navigateToHomePage();
     } catch (error) {

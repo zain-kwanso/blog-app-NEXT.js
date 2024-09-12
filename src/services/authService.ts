@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserCreationAttributes, UserType } from "../../@types/user";
 import User from "@/database/models/user.model";
-import { Payload } from "../../@types/module";
 
 const SECRET_KEY = process.env.SECRET_KEY || "your-secret-key";
 

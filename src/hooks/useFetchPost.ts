@@ -1,18 +1,37 @@
-import axios from "axios";
-import { PostResponse } from "../../@types/post";
-import { backend_url, url } from "@/utils/URL";
+import { Post, PostResponse } from "../../@types/post";
+import { url } from "@/utils/URL";
+import { useState } from "react";
+import axiosInstance from "@/utils/axiosInstance";
 
-const fetchPost = async (postId: number): Promise<PostResponse | null> => {
-  try {
-    const response = await axios.get<PostResponse>(
-      backend_url + url.posts + `/${postId}`
-    );
+interface UseFetchPost {
+  fetchPost: (postId: number) => Promise<void>;
+  post: Post | null;
+  loading: boolean;
+  error: string;
+}
 
-    return response.data;
-  } catch (err) {
-    console.error("Failed to load post", err);
-    return null; // Handle errors by returning null
-  }
+const useFetchPost = (): UseFetchPost => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  const [post, setPost] = useState<Post | null>(null);
+
+  const fetchPost = async (postId: number): Promise<void> => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await axiosInstance.get<PostResponse>(
+        `${url.posts}/${postId}`
+      );
+
+      setPost(response.data);
+    } catch (err) {
+      setError("Failed to load post");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { fetchPost, post, loading, error };
 };
 
-export default fetchPost;
+export default useFetchPost;

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/middleware/auth";
 
 export async function GET(req: NextRequest) {
-  // Use the token verification middleware
   const tokenVerification = await verifyToken(req);
 
   if (!tokenVerification.isValid) {
@@ -12,10 +11,8 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const { user } = tokenVerification; // Extract the user from the middleware result
-
+  const { user } = tokenVerification;
   try {
-    // Return user information as response
     return NextResponse.json(user, { status: 200 });
   } catch (error: unknown) {
     const errorMessage =

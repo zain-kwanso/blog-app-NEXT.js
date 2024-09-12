@@ -4,7 +4,7 @@ export const url = {
   comments: `/comments`,
   signin: `/auth/signin`,
   signup: `/auth/signup`,
-  me: `/users/me`,
+  me: `/auth/profile`,
 };
 
 // export const backend_url =

@@ -10,16 +10,18 @@ export interface UserCreationAttributes extends UserLoginAttributes {
   name: string;
 }
 
-export interface UserType {
+export interface User {
+  id: number;
+  name: string;
+  isAdmin: boolean;
+}
+export interface UserType extends User {
   email: string;
   password: string;
-  name: string;
-  id: number;
-  isAdmin: boolean;
 }
 
 export interface UserResponse {
-  user: Payload | null;
+  user: User | null;
 }
 
-export type UserInstanceType = data<User, UserCreationAttributes>;
+export type UserInstanceType = data<UserType, UserCreationAttributes>;

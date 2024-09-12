@@ -1,5 +1,8 @@
 import { Post, User } from "@/database/models/associations";
 import { Op, Sequelize } from "sequelize";
+import { PostResponse } from "../../@types/post";
+import axiosInstance from "@/utils/axiosInstance";
+import { url } from "@/utils/URL";
 
 //create post service
 export const createPost = async (
@@ -86,7 +89,6 @@ export const fetchPostsWithPaginationAndSearch = async (
 ) => {
   const offset = (page - 1) * limit;
 
-  // Search condition based on title and content
   const searchCondition = search
     ? {
         [Op.or]: [
@@ -96,7 +98,6 @@ export const fetchPostsWithPaginationAndSearch = async (
       }
     : {};
 
-  // Condition based on User ID if provided
   const userCondition = userId ? { UserId: userId } : {};
   const whereCondition = { ...searchCondition, ...userCondition };
 
@@ -105,10 +106,9 @@ export const fetchPostsWithPaginationAndSearch = async (
     include: [
       {
         model: User,
-        attributes: ["name"], // Fetch only the user's name
+        attributes: ["name"],
       },
     ],
-    attributes: ["id", "title", "content", "createdAt"], // Specify the fields to include in the response
     order: [["createdAt", "DESC"]],
     limit,
     offset,
@@ -121,7 +121,6 @@ export const fetchPostsWithPaginationAndSearch = async (
   return { rows, totalPages, nextPage, previousPage };
 };
 
-// Service to get all posts
 export const getAllPosts = async (
   page: number,
   limit: number,
@@ -130,7 +129,6 @@ export const getAllPosts = async (
   return await fetchPostsWithPaginationAndSearch(page, limit, search);
 };
 
-// Service to get posts by a specific user
 export const getPostsByUser = async (
   userId: number,
   page: number,

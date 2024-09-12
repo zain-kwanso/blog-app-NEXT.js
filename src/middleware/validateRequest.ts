@@ -1,5 +1,5 @@
 import { AnyObjectSchema } from "yup";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export const validateRequest = async (
   req: NextRequest,

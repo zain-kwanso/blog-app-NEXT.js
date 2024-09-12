@@ -26,6 +26,8 @@
     "react-toastify": "^10.0.5",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.14.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import axios from "axios";
+
 import {
   CommentCreationAttributes,
   CommentResponse,
 } from "../../@types/comment";
-import { backend_url, url } from "@/utils/URL";
+import { url } from "@/utils/URL";
+import axiosInstance from "@/utils/axiosInstance";
 
 export const useCreateComment = () => {
   const [error, setError] = useState<string>("");
@@ -20,8 +21,8 @@ export const useCreateComment = () => {
         ? { content, PostId: postId, ParentId: parentId }
         : { content, PostId: postId };
 
-      const response = await axios.post<CommentResponse>(
-        backend_url + url.comments + `/create`,
+      const response = await axiosInstance.post<CommentResponse>(
+        url.comments + `/create`,
         data
       );
       setSuccess("Comment created successfully!");

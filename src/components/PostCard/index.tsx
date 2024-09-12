@@ -5,9 +5,10 @@ import { Post, PostResponse } from "../../../@types/post";
 interface PostCardProps {
   post: PostResponse;
   onClick: (post: PostResponse) => void;
-  onDelete?: (id: number) => void;
-  onEdit?: (post: Post) => void;
+  onDelete: (id: number) => void;
+  onEdit: (post: Post) => void;
   isUserPost: boolean;
+  isAdmin: boolean;
 }
 
 // Utility function to truncate text
@@ -21,6 +22,7 @@ const transformPostData = (post: PostResponse) => ({
   title: post.title || "",
   content: post.content || "",
   authorName: post?.User?.name || "",
+  userId: post?.UserId,
 });
 
 const PostCard: React.FC<PostCardProps> = ({
@@ -29,9 +31,9 @@ const PostCard: React.FC<PostCardProps> = ({
   onDelete,
   onEdit,
   isUserPost,
+  isAdmin,
 }): React.JSX.Element => {
-  const { title, content, authorName, id } = transformPostData(post);
-
+  const { title, content, authorName, id, userId } = transformPostData(post);
   return (
     <div
       onClick={() => onClick(post)}
@@ -51,7 +53,7 @@ const PostCard: React.FC<PostCardProps> = ({
       {/* Conditionally render Edit and Delete buttons if it's the user's post */}
       {isUserPost && (
         <div className="mt-4 flex justify-end space-x-2">
-          {onEdit && (
+          {isUserPost && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -62,7 +64,7 @@ const PostCard: React.FC<PostCardProps> = ({
               Edit
             </button>
           )}
-          {onDelete && (
+          {(isUserPost || isAdmin) && (
             <button
               onClick={(e) => {
                 e.stopPropagation();

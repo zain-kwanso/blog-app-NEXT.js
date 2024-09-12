@@ -8,6 +8,11 @@ export interface Post {
   UserId: number;
 }
 
+export interface PostFormData {
+  title: string;
+  content: string;
+}
+
 export interface PostCreationAttributes
   extends Optional<PostAttributes, "id" | "UserId"> {}
 

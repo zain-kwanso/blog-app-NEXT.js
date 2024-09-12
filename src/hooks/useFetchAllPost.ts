@@ -1,13 +1,14 @@
 import { useState } from "react";
-import axios from "axios";
 import { Pagination, PostResponse } from "../../@types/post";
 import { backend_url, url } from "@/utils/URL";
+import axiosInstance from "@/utils/axiosInstance";
 
 interface FetchPostsArgs {
   pageUrl?: string;
   page?: number;
   limit?: number;
   search?: string;
+  userId?: number | null;
 }
 
 interface UseFetchAllPosts {
@@ -16,7 +17,6 @@ interface UseFetchAllPosts {
   error: string;
   pagination: Pagination;
   fetchAllPosts: (args: FetchPostsArgs) => Promise<void>;
-  fetchUserPosts: (args: FetchPostsArgs) => Promise<void>;
 }
 
 const useFetchAllPosts = (): UseFetchAllPosts => {
@@ -31,19 +31,27 @@ const useFetchAllPosts = (): UseFetchAllPosts => {
   });
 
   const fetchAllPosts = async ({
-    pageUrl = backend_url + url.posts,
+    pageUrl = url.posts,
     page = 1,
     limit = 10,
     search = "",
+    userId = null,
   }: FetchPostsArgs): Promise<void> => {
     setError("");
     setLoading(true);
     setPosts([]);
 
     try {
-      const response = await axios.get(
-        `${pageUrl}?page=${page}&limit=${limit}&search=${search}`
-      );
+      let response;
+      if (userId === null) {
+        response = await axiosInstance.get(
+          `${pageUrl}?page=${page}&limit=${limit}&search=${search}`
+        );
+      } else {
+        response = await axiosInstance.get(
+          `${pageUrl}?page=${page}&limit=${limit}&search=${search}&userId=${userId}`
+        );
+      }
 
       const data = response.data;
       setPosts(data.posts);
@@ -60,22 +68,11 @@ const useFetchAllPosts = (): UseFetchAllPosts => {
     }
   };
 
-  const fetchUserPosts = async ({
-    pageUrl = backend_url + url.posts,
-    page = 1,
-    limit = 10,
-    search = "",
-  }: FetchPostsArgs): Promise<void> => {
-    console.log(url.posts);
-    fetchAllPosts({ pageUrl, page, limit, search });
-  };
-
   return {
     posts,
     pagination,
     loading,
     fetchAllPosts,
-    fetchUserPosts,
     error,
   };
 };

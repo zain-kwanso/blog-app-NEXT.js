@@ -1,8 +1,6 @@
-// app/posts/[id]/page.tsx (Server Component)
 import CommentsSection from "@/components/CommentSection";
 import PostContent from "@/components/PostContent";
-// import CommentsSection from "@/components/CommentsSection";
-import fetchPost from "@/hooks/useFetchPost";
+import fetchPost from "@/services/frontendPostService";
 
 export default async function PreviewPostPage({
   params,
@@ -10,6 +8,7 @@ export default async function PreviewPostPage({
   params: { id: string };
 }) {
   const postId = parseInt(params.id, 10);
+  console.log("************************* inside the page ********************");
   const post = await fetchPost(postId); // Fetch the post data on the server
 
   return (

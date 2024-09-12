@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { ReplyComment, ResComment } from "../../../@types/comment";
 import useFetchComments from "@/hooks/useFetchComments";
 import { useCreateComment } from "@/hooks/useCreateComment";
 import CommentSkeleton from "../CommentSkeleton";
+import useDeleteComment from "@/hooks/useDeleteComment";
+import { AuthContext } from "@/context/authContext";
+import { toast } from "react-toastify";
 
 interface CommentsSectionProps {
   postId: number; // The post ID passed from the parent component
@@ -19,10 +22,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
   const { fetchComments, comments, loading, error } = useFetchComments();
   const { createComment } = useCreateComment();
-  const user = null; // Default user is null for now
+  const { deleteComment } = useDeleteComment();
+
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log("***************** inside useeffect ***************");
     fetchComments(postId);
   }, [postId]);
 
@@ -30,9 +34,22 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
     if (newComment.trim() === "") return;
     try {
       await createComment(newComment, postId);
-      fetchComments(postId); // Re-fetch comments after adding
+      fetchComments(postId);
+      toast.success("comment added successfully.");
     } catch (error) {
       console.error("Error adding comment:", error);
+      toast.error("Failed to add comment.");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      await deleteComment(commentId);
+      fetchComments(postId);
+      toast.success("Comment deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error("Failed to delete comment.");
     }
   };
 
@@ -43,9 +60,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
     if (replyComment[parentId]?.trim() === "") return;
     try {
       await createComment(replyComment[parentId]!, postId, parentId);
+      toast.success("Reply added successfully.");
       fetchComments(postId);
     } catch (error) {
       console.error("Error adding reply:", error);
+      toast.error("ailed to add reply.");
     }
   };
 
@@ -102,6 +121,14 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
             </p>
           </div>
         </div>
+        {(comment?.UserId === user?.id || user?.isAdmin) && (
+          <button
+            className="text-red-500 text-xs"
+            onClick={() => handleDeleteComment(comment.id)}
+          >
+            Delete
+          </button>
+        )}
         {level < 1 && user && (
           <button
             className="text-blue-500 text-xs ml-2"
@@ -198,26 +225,53 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
         <div className="mt-8">
           <h3 className="text-lg font-bold">Add a comment</h3>
           <div className="mt-4 grid gap-4">
-            <textarea
-              className={`w-full p-2 border rounded text-sm ${
-                newCommentError ? "border-red-500" : ""
-              }`}
-              value={newComment}
-              onChange={(e) => handleCommentChange(e.target.value)}
-              placeholder="Add a comment"
-              rows={3}
-            />
-            <button
-              className="bg-blue-500 text-white text-sm px-4 py-2 rounded"
-              onClick={() => {
-                if (!newCommentError) {
-                  handleAddComment(newComment);
-                  setNewComment("");
-                }
-              }}
-            >
-              Add Comment
-            </button>
+            <div className="grid grid-cols-[48px_1fr] items-start gap-4">
+              <div className="w-12 h-12 border rounded-full">
+                <span className="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12 border">
+                  <img
+                    className="aspect-square h-full w-full"
+                    alt="@shadcn"
+                    src="https://generated.vusercontent.net/placeholder-user.jpg"
+                  />
+                </span>
+              </div>
+              <div className="flex items-end gap-2">
+                <textarea
+                  className={`w-full p-2 border rounded text-sm ${
+                    newCommentError ? "border-red-500" : ""
+                  }`}
+                  value={newComment}
+                  onChange={(e) => handleCommentChange(e.target.value)}
+                  placeholder="Add a comment"
+                  rows={3}
+                />
+                <button
+                  className="bg-blue-500 text-white text-sm px-4 py-2 rounded"
+                  onClick={() => {
+                    if (!newCommentError) {
+                      handleAddComment(newComment);
+                      setNewComment("");
+                    }
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 inline-block rotate-90"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>
+                  {/* Send */}
+                </button>
+              </div>
+            </div>
             {newCommentError && (
               <p className="text-red-500 text-xs mt-1">{newCommentError}</p>
             )}
