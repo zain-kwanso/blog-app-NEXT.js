@@ -9,6 +9,7 @@ import useEditPost from "@/hooks/useEditPost";
 import useFetchPost from "@/hooks/useFetchPost";
 import { PostFormData } from "../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
+import withAuth from "@/components/withAuth";
 
 const EditPostPage = ({ params }: { params: { id: string } }) => {
   const { editPost } = useEditPost();
@@ -122,4 +123,4 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default EditPostPage;
+export default withAuth(EditPostPage);

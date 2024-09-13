@@ -110,11 +110,16 @@ const HomePage = () => {
     setSearch(debouncedSearch);
 
     if (currentPage === 1) {
-      fetchAllPosts({
-        page: currentPage,
-        limit: itemsPerPage,
-        search,
-      });
+      if (activeTab === "userPosts") {
+        fetchAllPosts({
+          page: currentPage,
+          limit: itemsPerPage,
+          search,
+          userId: user?.id,
+        });
+      } else {
+        fetchAllPosts({ page: currentPage, limit: itemsPerPage, search });
+      }
     } else {
       setCurrentPage(1);
     }

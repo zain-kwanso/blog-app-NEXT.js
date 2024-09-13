@@ -4,15 +4,15 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
-import { postValidationSchema } from "@/validation/validationSchema"; // Assuming you have this schema
-import useCreatePost from "@/hooks/useCreatePost"; // Your create post hook
-import { useRouter } from "next/navigation"; // Next.js useRouter for navigation
+import { postValidationSchema } from "@/validation/validationSchema";
+import useCreatePost from "@/hooks/useCreatePost";
 import { PostFormData } from "../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
+import withAuth from "@/components/withAuth";
 
 const CreatePostPage: React.FC = () => {
   const { createPost } = useCreatePost();
-  const router = useRouter();
+
   const { navigateToPreviewPostPage } = useCustomNavigation();
 
   const defaultPostValues: PostFormData = {
@@ -107,4 +107,4 @@ const CreatePostPage: React.FC = () => {
   );
 };
 
-export default CreatePostPage;
+export default withAuth(CreatePostPage);

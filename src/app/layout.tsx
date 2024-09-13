@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import PublicHeader from "@/components/PublicHeader";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/authContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ProtectedRoute from "@/components/ProtectedRoutes";
+import ClientHeader from "@/components/ClientHeader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,7 +34,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <div className="flex flex-col min-h-screen h-full justify-between relative">
-            <PublicHeader />
+            <ClientHeader />
 
             <ToastContainer />
             <main>{children}</main>

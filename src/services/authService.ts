@@ -52,8 +52,6 @@ export const signinService = async (
   const token = jwt.sign({ id: user?.id }, SECRET_KEY, {
     expiresIn: "24h",
   });
-  const decoded = jwt.verify(token, SECRET_KEY);
-  console.log(decoded);
 
   return token;
 };
