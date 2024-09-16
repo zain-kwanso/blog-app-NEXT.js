@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { signupValidationSchema } from "@/validation/validationSchema";
-
-import { useRouter } from "next/navigation"; // Use the Next.js router
+import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { UserCreationAttributes } from "../../../@types/user";
-
+import { AuthContext } from "@/context/authContext";
 const SignupForm: React.FC = (): React.JSX.Element => {
-  const router = useRouter(); // Use Next.js router for navigation
+  const { signup } = useContext(AuthContext);
+  const { navigateToOTPVerificationPage } = useCustomNavigation();
 
   const defaultSignupValues: UserCreationAttributes = {
     name: "default",
@@ -29,10 +29,9 @@ const SignupForm: React.FC = (): React.JSX.Element => {
 
   const onSubmit: SubmitHandler<UserCreationAttributes> = async (data) => {
     try {
-      // Perform signup logic here (API call)
-      // Example: await signup(data.name, data.email, data.password);
-      toast.success("Signup successful!");
-      router.push("/"); // Navigate to home page after successful signup
+      const { name, email, password } = data;
+      await signup(name, email, password);
+      navigateToOTPVerificationPage();
     } catch (error) {
       toast.error("An error occurred during signup");
     }

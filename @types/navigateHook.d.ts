@@ -5,4 +5,5 @@ export interface UseCustomNavigation {
   navigateToLoginPage: () => void;
   navigateToSignupPage: () => void;
   navigateToHomePage: () => void;
+  navigateToOTPVerificationPage: () => void;
 }

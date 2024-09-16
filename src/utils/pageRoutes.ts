@@ -1,5 +1,6 @@
 export const routeUrl = {
   base: `/`,
+  verifyOtp: `/otp-verification`,
   login: `/login`,
   about: `/about-us`,
   home: "/",

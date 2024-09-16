@@ -31,6 +31,18 @@ const User: UserInstanceType = sequelize.define<UserInstanceType>(
     isAdmin: {
       type: DataTypes.BOOLEAN,
     },
+    otp: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    otpExpiration: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     tableName: "Users",

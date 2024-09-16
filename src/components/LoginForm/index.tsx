@@ -10,7 +10,7 @@ import { useContext } from "react";
 import { AuthContext } from "@/context/authContext";
 
 const LoginForm: React.FC = (): React.JSX.Element => {
-  const { navigateToHomePage } = useCustomNavigation();
+  const { navigateToOTPVerificationPage } = useCustomNavigation();
   const { signin } = useContext(AuthContext);
 
   const defaultLoginValues: UserLoginAttributes = {
@@ -29,9 +29,8 @@ const LoginForm: React.FC = (): React.JSX.Element => {
 
   const onSubmit: SubmitHandler<UserLoginAttributes> = async (data) => {
     try {
-      await signin(data.email, data.password); // Call signin from context
-      toast.success("Login successful!");
-      navigateToHomePage();
+      await signin(data.email, data.password);
+      navigateToOTPVerificationPage();
     } catch (error) {
       toast.error("Invalid Credentials!");
     }

@@ -5,15 +5,18 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    const token = await signinService(email, password);
-    if (!token) {
+    const success = await signinService(email, password);
+    if (!success) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 403 }
       );
     }
 
-    return NextResponse.json({ token }, { status: 200 });
+    return NextResponse.json(
+      { success: "Valid Credentials " },
+      { status: 200 }
+    );
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);

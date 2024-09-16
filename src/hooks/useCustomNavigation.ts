@@ -22,6 +22,7 @@ const useCustomNavigation = (): UseCustomNavigation => {
     navigateToLoginPage: () => router.push(routeUrl.login),
     navigateToSignupPage: () => router.push(routeUrl.signup),
     navigateToHomePage: () => router.push(routeUrl.base),
+    navigateToOTPVerificationPage: () => router.push(routeUrl.verifyOtp),
   };
 };
 

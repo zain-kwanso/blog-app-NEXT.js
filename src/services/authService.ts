@@ -2,18 +2,20 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserCreationAttributes, UserType } from "../../@types/user";
 import User from "@/database/models/user.model";
+import { generateOTP, sendOTPEmail } from "./otpService";
+import { Op } from "sequelize";
 
 const SECRET_KEY = process.env.SECRET_KEY || "your-secret-key";
 
 // Signup service
 export const signupService = async (
   userData: UserCreationAttributes
-): Promise<string | null> => {
+): Promise<boolean> => {
   const { email, password, name } = userData;
 
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
-    return null;
+    return false;
   }
 
   const newUser = await User.create({
@@ -22,18 +24,16 @@ export const signupService = async (
     password,
   });
 
-  const token = jwt.sign({ id: newUser?.id }, SECRET_KEY, {
-    expiresIn: "24h",
-  });
+  console.log(newUser);
 
-  return token;
+  return true;
 };
 
 // signin service
 export const signinService = async (
   email: string,
   password: string
-): Promise<string | null> => {
+): Promise<boolean> => {
   const user = await User.scope("withPassword").findOne({
     where: {
       email: email,
@@ -41,19 +41,22 @@ export const signinService = async (
   });
 
   if (!user || !user.password) {
-    return null;
+    return false;
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    return null;
+    return false;
   }
   console.log("id: ", user?.id);
-  const token = jwt.sign({ id: user?.id }, SECRET_KEY, {
-    expiresIn: "24h",
-  });
 
-  return token;
+  const otp = generateOTP();
+  user.otp = otp;
+  user.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
+  await user.save();
+  await sendOTPEmail(user.email, otp);
+
+  return true;
 };
 
 // get profile service
@@ -77,3 +80,32 @@ export const getProfileFromToken = async (
     throw new Error("Invalid token");
   }
 };
+
+//verify OTP service
+export async function verifyOTP(
+  email: string,
+  otp: string
+): Promise<string | null> {
+  const user = await User.findOne({
+    where: {
+      email,
+      otp,
+      otpExpiration: { [Op.gt]: new Date() },
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  user.isVerified = true;
+  user.otp = null;
+  user.otpExpiration = null;
+  await user.save();
+
+  const token = jwt.sign({ id: user.id }, SECRET_KEY, {
+    expiresIn: "24h",
+  });
+
+  return token;
+}

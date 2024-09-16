@@ -3,13 +3,14 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getToken, setToken, removeToken } from "@/utils/authUtils";
 import { useRouter } from "next/navigation";
-import { User, UserResponse } from "../../@types/user";
+import { User } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
 import { url } from "@/utils/URL";
 import axiosInstance from "@/utils/axiosInstance";
 
 const initialAuthContext: AuthContextType = {
   user: null,
+  email: null,
   loading: false,
   signup: async (name, email, password) => {
     return true;
@@ -17,6 +18,10 @@ const initialAuthContext: AuthContextType = {
   signin: async (email, password) => {
     return true;
   },
+  verifyOtp: async (email, otp) => {
+    return true;
+  },
+
   signout: () => {},
 };
 
@@ -24,6 +29,7 @@ const AuthContext = createContext<AuthContextType>(initialAuthContext);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
@@ -48,6 +54,23 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     fetchUser();
   }, []);
 
+  // verify-otp function
+  const verifyOtp = async (email: string, otp: string) => {
+    try {
+      const response = await axiosInstance.post("/auth/verify-otp", {
+        email,
+        otp,
+      });
+      console.log(response);
+      setToken(response.data.token);
+      await fetchUser();
+      return true;
+    } catch (error) {
+      console.error("OTP error:", error);
+      throw error;
+    }
+  };
+
   // Sign up function
   const signup = async (name: string, email: string, password: string) => {
     try {
@@ -56,8 +79,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
       });
-      setToken(response.data.token);
-      await fetchUser();
+      setEmail(email);
+
       return true;
     } catch (error) {
       console.error("Sign-up error:", error);
@@ -72,8 +95,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
       });
-      setToken(response.data.token);
-      await fetchUser();
+      setEmail(email);
       return true;
     } catch (error) {
       console.error("Sign-in error:", error);
@@ -85,11 +107,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signout = () => {
     setUser(null);
     removeToken();
-    router.push("/login"); // Redirect to login page after signing out
+    router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ loading, user, signup, signin, signout }}>
+    <AuthContext.Provider
+      value={{ loading, user, email, signup, signin, signout, verifyOtp }}
+    >
       {children}
     </AuthContext.Provider>
   );
