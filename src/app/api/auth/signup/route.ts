@@ -1,9 +1,17 @@
+import { validateRequest } from "@/middleware/validateRequest";
 import { signupService } from "@/services/authService";
+import { signupValidationSchema } from "@/validation/validationSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const { isValid, body, errors } = await validateRequest(
+      req,
+      signupValidationSchema
+    );
+    if (!isValid) {
+      return NextResponse.json({ errors }, { status: 400 });
+    }
     const success = await signupService(body);
 
     if (!success) {

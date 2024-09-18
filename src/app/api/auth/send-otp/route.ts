@@ -5,7 +5,7 @@ import User from "@/database/models/user.model";
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
-    console.log("email : ", email);
+   
 
     const user = await User.findOne({ where: { email } });
 

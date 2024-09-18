@@ -1,7 +1,7 @@
 import { Optional } from "sequelize";
 // import { data } from "../squelize";
 
-export interface Comment {
+export interface CommentAttribubtes {
   id: number;
   content: string;
   UserId: number;
@@ -14,14 +14,14 @@ export interface CommentCreationAttributes
 
 export type CommentInstance = data<Comment, CommentCreationAttributes>;
 
-export interface ResComment extends Comment {
+export interface Comment extends CommentAttribubtes {
   createdAt: string;
   updatedAt: string;
   User: UserForComment;
-  replies?: ResComment[];
+  replies?: Comment[];
 }
 
-export type CommentResponse = ResComment[];
+export type CommentResponse = Comment[];
 
 export interface ReplyComment {
   [key: number]: string | null;

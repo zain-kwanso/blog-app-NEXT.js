@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   const { title, content } = validationResponse.body;
 
   try {
-    const newPost = await createPost(title, content, user.id);
+    const newPost = await createPost(title, content, user?.id!);
 
     return NextResponse.json(newPost, { status: 200 });
   } catch (error) {

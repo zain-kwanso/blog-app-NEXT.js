@@ -3,7 +3,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getToken, setToken, removeToken } from "@/utils/authUtils";
 import { useRouter } from "next/navigation";
-import { User } from "../../@types/user";
+import { User, UserResponse } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
 import { url } from "@/utils/URL";
 import axiosInstance from "@/utils/axiosInstance";
@@ -28,7 +28,7 @@ const initialAuthContext: AuthContextType = {
 const AuthContext = createContext<AuthContextType>(initialAuthContext);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -39,7 +39,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const token = getToken();
     if (token) {
       try {
-        const response = await axiosInstance.get<User>(url.me);
+        const response = await axiosInstance.get<UserResponse>(url.me);
         setUser(response.data);
       } catch (error) {
         console.error("Failed to fetch user:", error);
@@ -57,11 +57,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // verify-otp function
   const verifyOtp = async (email: string, otp: string) => {
     try {
-      const response = await axiosInstance.post("/auth/verify-otp", {
+      const response = await axiosInstance.post(url.verify_OTP, {
         email,
         otp,
       });
-      console.log(response);
+
       setToken(response.data.token);
       await fetchUser();
       return true;

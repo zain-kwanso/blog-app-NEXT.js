@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useContext } from "react";
-
-import { ReplyComment, ResComment } from "../../../@types/comment";
+import Image from "next/image";
+import { ReplyComment, Comment } from "../../../@types/comment";
 import useFetchComments from "@/hooks/useFetchComments";
 import { useCreateComment } from "@/hooks/useCreateComment";
 import CommentSkeleton from "../CommentSkeleton";
@@ -100,101 +100,120 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   };
 
   const renderComments = (
-    comments: ResComment[],
+    comments: Comment[],
     level: number = 0
   ): JSX.Element[] => {
-    return comments?.map((comment) => (
-      <div key={comment.id} className={`ml-${level * 4} mt-2 border-l-2 pl-4`}>
-        <div className="flex items-start gap-4">
-          <div className="w-8 h-8 border rounded-full">
-            <img
-              src="https://generated.vusercontent.net/placeholder-user.jpg"
-              alt="User"
-            />
-          </div>
-          <div className="grid gap-1">
-            <div className="font-bold text-sm text-gray-700">
-              {comment?.User?.name || "Anonymous"}
-            </div>
-            <p className="text-muted-foreground text-sm font-medium">
-              {comment?.content}
-            </p>
-          </div>
-        </div>
-        {(comment?.UserId === user?.id || user?.isAdmin) && (
-          <button
-            className="text-red-500 text-xs"
-            onClick={() => handleDeleteComment(comment.id)}
-          >
-            Delete
-          </button>
-        )}
-        {level < 1 && user && (
-          <button
-            className="text-blue-500 text-xs ml-2"
-            onClick={() =>
-              setReplyComment((prev) => ({
-                ...prev,
-                [comment.id]: prev[comment.id] || "",
-              }))
-            }
-          >
-            Reply
-          </button>
-        )}
-        {/* Reply Section */}
-        {replyComment[comment.id] !== null &&
-          level < 1 &&
-          replyComment[comment.id] !== undefined && (
-            <div className="mt-2">
-              <textarea
-                className={`w-full p-2 border rounded text-sm ${
-                  replyError[comment.id] ? "border-red-500" : ""
-                }`}
-                value={replyComment[comment.id]!}
-                rows={3}
-                onChange={(e) => handleReplyChange(comment.id, e.target.value)}
-                placeholder="Add a reply"
+    return comments?.map((comment) => {
+      // Determine the profile picture URL (use the provided URL or fallback to the placeholder)
+      const profilePictureUrl = comment?.User?.profilePictureUrl
+        ? comment.User.profilePictureUrl
+        : "https://generated.vusercontent.net/placeholder-user.jpg";
+
+      return (
+        <div
+          key={comment.id}
+          className={`ml-${level * 4} mt-2 border-l-2 pl-4`}
+        >
+          <div className="flex items-start gap-4">
+            {/* Profile Picture using Next.js Image */}
+            <div className="w-8 h-8 border rounded-full overflow-hidden">
+              <Image
+                src={profilePictureUrl} // Dynamic or fallback profile picture URL
+                alt={`${comment?.User?.name || "User"}'s profile picture`}
+                width={32} // Specify the width
+                height={32} // Specify the height
+                className="rounded-full object-cover" // Ensure the image is rounded and covers the container
               />
-              {replyError[comment.id] && (
-                <p className="text-red-500 text-xs mt-1">
-                  {replyError[comment.id]}
-                </p>
-              )}
-              <div className="flex items-center justify-end gap-3">
-                <button
-                  className="bg-gray-500 text-white text-xs px-4 py-2 rounded mt-2"
-                  onClick={() =>
-                    setReplyComment((prev) => ({
-                      ...prev,
-                      [comment.id]: null,
-                    }))
+            </div>
+            <div className="grid gap-1">
+              <div className="font-bold text-sm text-gray-700">
+                {comment?.User?.name || "Anonymous"}
+              </div>
+              <p className="text-muted-foreground text-sm font-medium">
+                {comment?.content}
+              </p>
+            </div>
+          </div>
+          {/* Admin or Author Delete Button */}
+          {(comment?.UserId === user?.id || user?.isAdmin) && (
+            <button
+              className="text-red-500 text-xs"
+              onClick={() => handleDeleteComment(comment.id)}
+            >
+              Delete
+            </button>
+          )}
+          {/* Reply Button (Level 0 Only) */}
+          {level < 1 && user && (
+            <button
+              className="text-blue-500 text-xs ml-2"
+              onClick={() =>
+                setReplyComment((prev) => ({
+                  ...prev,
+                  [comment.id]: prev[comment.id] || "",
+                }))
+              }
+            >
+              Reply
+            </button>
+          )}
+          {/* Reply Section */}
+          {replyComment[comment.id] !== null &&
+            level < 1 &&
+            replyComment[comment.id] !== undefined && (
+              <div className="mt-2">
+                <textarea
+                  className={`w-full p-2 border rounded text-sm ${
+                    replyError[comment.id] ? "border-red-500" : ""
+                  }`}
+                  value={replyComment[comment.id]!}
+                  rows={3}
+                  onChange={(e) =>
+                    handleReplyChange(comment.id, e.target.value)
                   }
-                >
-                  Cancel
-                </button>
-                <button
-                  className="bg-blue-500 text-white text-xs px-4 py-2 rounded mt-2"
-                  onClick={() => {
-                    if (!replyError[comment.id]) {
-                      handleAddReply(replyComment, comment.id);
+                  placeholder="Add a reply"
+                />
+                {replyError[comment.id] && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {replyError[comment.id]}
+                  </p>
+                )}
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    className="bg-gray-500 text-white text-xs px-4 py-2 rounded mt-2"
+                    onClick={() =>
                       setReplyComment((prev) => ({
                         ...prev,
                         [comment.id]: null,
-                      }));
+                      }))
                     }
-                  }}
-                >
-                  Add Reply
-                </button>
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-blue-500 text-white text-xs px-4 py-2 rounded mt-2"
+                    onClick={() => {
+                      if (!replyError[comment.id]) {
+                        handleAddReply(replyComment, comment.id);
+                        setReplyComment((prev) => ({
+                          ...prev,
+                          [comment.id]: null,
+                        }));
+                      }
+                    }}
+                  >
+                    Add Reply
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        {comment.replies &&
-          comment.replies.length > 0 &&
-          renderComments(comment.replies, level + 1)}
-      </div>
-    ));
+            )}
+          {/* Render Replies Recursively */}
+          {comment.replies &&
+            comment.replies.length > 0 &&
+            renderComments(comment.replies, level + 1)}
+        </div>
+      );
+    });
   };
 
   return (
@@ -226,15 +245,23 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
           <h3 className="text-lg font-bold">Add a comment</h3>
           <div className="mt-4 grid gap-4">
             <div className="grid grid-cols-[48px_1fr] items-start gap-4">
+              {/* User Profile Picture */}
               <div className="w-12 h-12 border rounded-full">
                 <span className="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12 border">
-                  <img
-                    className="aspect-square h-full w-full"
-                    alt="@shadcn"
-                    src="https://generated.vusercontent.net/placeholder-user.jpg"
+                  <Image
+                    className="aspect-square h-full w-full rounded-full object-cover"
+                    alt={user?.name || "User"}
+                    src={
+                      user?.profilePictureUrl ||
+                      "https://generated.vusercontent.net/placeholder-user.jpg"
+                    }
+                    width={48}
+                    height={48}
                   />
                 </span>
               </div>
+
+              {/* Comment Text Area and Button */}
               <div className="flex items-end gap-2">
                 <textarea
                   className={`w-full p-2 border rounded text-sm ${
@@ -268,10 +295,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
                       d="M5 10l7-7m0 0l7 7m-7-7v18"
                     />
                   </svg>
-                  {/* Send */}
                 </button>
               </div>
             </div>
+
+            {/* Display Error Message */}
             {newCommentError && (
               <p className="text-red-500 text-xs mt-1">{newCommentError}</p>
             )}

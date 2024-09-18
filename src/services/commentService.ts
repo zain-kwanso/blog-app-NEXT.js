@@ -1,4 +1,5 @@
 import { Comment, User } from "@/database/models/associations";
+import { generatePresignedUrl } from "./s3Service";
 
 // Service to create a new comment
 export const createCommentService = async (
@@ -49,10 +50,11 @@ export const deleteCommentService = async (
 };
 
 export const getPostCommentsService = async (postId: number) => {
-  return await Comment.findAll({
+  // Fetch comments along with user information, including the profileKey
+  const comments = await Comment.findAll({
     where: {
       PostId: postId,
-      ParentId: null, // Fetch only top-level comments
+      ParentId: null,
     },
     include: [
       {
@@ -62,15 +64,61 @@ export const getPostCommentsService = async (postId: number) => {
         include: [
           {
             model: User,
-            attributes: ["name"], // Include author's name for replies
+            attributes: ["name", "profileKey"], // Fetch the profileKey along with the name
           },
         ],
       },
       {
         model: User,
-        attributes: ["name"], // Include author's name for top-level comments
+        attributes: ["name", "profileKey"], // Fetch the profileKey along with the name
       },
     ],
-    order: [["createdAt", "ASC"]], // Order by creation time
+    order: [["createdAt", "ASC"]],
   });
+
+  // Iterate through the comments and generate profilePictureUrls
+  const commentsWithProfilePicture = await Promise.all(
+    //@ts-ignore
+    comments.map(async (comment) => {
+      // Check if the main comment has a User and a profileKey
+      let profilePictureUrl = null;
+      if (comment.User && comment.User.profileKey) {
+        profilePictureUrl = await generatePresignedUrl(comment.User.profileKey);
+      }
+
+      // Check if the comment has replies and process each reply's user information
+      const repliesWithProfilePicture = comment.replies
+        ? await Promise.all(
+            //@ts-ignore
+            comment.replies.map(async (reply) => {
+              let replyProfilePictureUrl = null;
+              if (reply.User && reply.User.profileKey) {
+                replyProfilePictureUrl = await generatePresignedUrl(
+                  reply.User.profileKey
+                );
+              }
+              return {
+                ...reply.toJSON(),
+                User: {
+                  ...reply.User?.toJSON(),
+                  profilePictureUrl: replyProfilePictureUrl,
+                },
+              };
+            })
+          )
+        : [];
+
+      // Return the comment with the user's profilePictureUrl and replies
+      return {
+        ...comment.toJSON(),
+        User: {
+          ...comment.User?.toJSON(),
+          profilePictureUrl,
+        },
+        replies: repliesWithProfilePicture,
+      };
+    })
+  );
+
+  return commentsWithProfilePicture;
 };

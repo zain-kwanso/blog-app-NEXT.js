@@ -14,7 +14,7 @@ export interface PostFormData {
 }
 
 export interface PostCreationAttributes
-  extends Optional<PostAttributes, "id" | "UserId"> {}
+  extends Optional<Post, "id" | "UserId"> {}
 
 export type PostInstance = data<Post, PostCreationAttributes>;
 

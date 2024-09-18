@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { AuthContext } from "@/context/authContext";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
+import axiosInstance from "@/utils/axiosInstance";
+import { url } from "@/utils/URL";
 
 const OTPPage: React.FC = () => {
   const [otp, setOtp] = useState("");
@@ -12,7 +14,7 @@ const OTPPage: React.FC = () => {
   const [timer, setTimer] = useState(60);
   const [canResendOTP, setCanResendOTP] = useState(false);
   const { verifyOtp, email } = useContext(AuthContext);
-  const { navigateToHomePage } = useCustomNavigation();
+  const { navigateToHomePage, navigateToLoginPage } = useCustomNavigation();
 
   useEffect(() => {
     sendOTP();
@@ -49,12 +51,13 @@ const OTPPage: React.FC = () => {
   };
   const sendOTP = async () => {
     try {
-      await axios.post("/api/auth/send-otp", { email });
+      await axiosInstance.post(url.send_OTP, { email });
       toast.success("OTP sent to your email!");
       setTimer(60);
       setCanResendOTP(false);
     } catch (error) {
       toast.error("Failed to send OTP!");
+      navigateToLoginPage();
     }
   };
 

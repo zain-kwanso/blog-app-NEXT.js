@@ -4,6 +4,7 @@ import { UserCreationAttributes, UserType } from "../../@types/user";
 import User from "@/database/models/user.model";
 import { generateOTP, sendOTPEmail } from "./otpService";
 import { Op } from "sequelize";
+import { generatePresignedUrl } from "./s3Service";
 
 const SECRET_KEY = process.env.SECRET_KEY || "your-secret-key";
 
@@ -23,8 +24,6 @@ export const signupService = async (
     name,
     password,
   });
-
-  console.log(newUser);
 
   return true;
 };
@@ -48,13 +47,6 @@ export const signinService = async (
   if (!isPasswordValid) {
     return false;
   }
-  console.log("id: ", user?.id);
-
-  const otp = generateOTP();
-  user.otp = otp;
-  user.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
-  await user.save();
-  await sendOTPEmail(user.email, otp);
 
   return true;
 };
@@ -65,17 +57,23 @@ export const getProfileFromToken = async (
 ): Promise<Partial<UserType>> => {
   try {
     const decoded = jwt.verify(token, SECRET_KEY) as { id: string };
-    console.log("decoded : ", decoded);
 
     const user = await User.findByPk(decoded?.id, {
-      attributes: ["id", "name", "isAdmin"],
+      attributes: ["id", "name", "isAdmin", "profileKey"],
     });
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    return user;
+    const profilePictureUrl = await generatePresignedUrl(user.profileKey);
+
+    const userData = user.toJSON();
+
+    return {
+      ...userData,
+      profilePictureUrl,
+    };
   } catch (error) {
     throw new Error("Invalid token");
   }

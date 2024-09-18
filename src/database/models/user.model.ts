@@ -43,6 +43,11 @@ const User: UserInstanceType = sequelize.define<UserInstanceType>(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+
+    profileKey: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "Users",

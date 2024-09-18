@@ -8,8 +8,7 @@ export default async function PreviewPostPage({
   params: { id: string };
 }) {
   const postId = parseInt(params.id, 10);
-  console.log("************************* inside the page ********************");
-  const post = await fetchPost(postId); // Fetch the post data on the server
+  const post = await fetchPost(postId); 
 
   return (
     <div className="w-full max-w-4xl mx-auto py-8 px-4 md:px-6">

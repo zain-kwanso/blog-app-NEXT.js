@@ -1,7 +1,7 @@
-import { User } from "./user";
+import { UserResponse } from "./user";
 
 export interface AuthContextType {
-  user?: User | null;
+  user?: UserResponse | null;
   email?: string | null;
   loading: boolean;
   signup: (name: string, email: string, password: string) => Promise<boolean>;

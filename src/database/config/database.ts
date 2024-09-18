@@ -5,7 +5,6 @@ declare global {
   var sequelize: Sequelize | undefined;
 }
 
-// Initialize or return the existing Sequelize instance
 const sequelize =
   global.sequelize ||
   new Sequelize(
@@ -17,11 +16,10 @@ const sequelize =
       port: Number(process.env.DB_PORT!),
       dialect: "postgres",
       dialectModule: pg,
-      logging: false, // Disable logging for optimization
+      logging: false,
     }
   );
 
-// // Assign the newly created sequelize instance to the global object
 if (!global.sequelize) {
   global.sequelize = sequelize;
 }

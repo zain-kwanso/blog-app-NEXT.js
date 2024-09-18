@@ -5,9 +5,8 @@ export const url = {
   signin: `/auth/signin`,
   signup: `/auth/signup`,
   me: `/auth/profile`,
+  send_OTP: `/auth/send-otp`,
+  verify_OTP: `/auth/verify-otp`,
 };
-
-// export const backend_url =
-//   "https://blog-app-backend-ovjrhm6u1-zains-projects-bc1b3e85.vercel.app/";
 
 export const backend_url = "http://localhost:3000/api";

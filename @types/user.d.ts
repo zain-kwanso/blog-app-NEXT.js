@@ -1,7 +1,3 @@
-// import { data } from "../squelize";
-
-import { Payload } from "./module";
-
 export interface UserLoginAttributes {
   email: string;
   password: string;
@@ -14,6 +10,7 @@ export interface User {
   id: number;
   name: string;
   isAdmin: boolean;
+  profileKey: string;
 }
 export interface UserType extends User {
   email: string;
@@ -23,8 +20,8 @@ export interface UserType extends User {
   isVerified: boolean;
 }
 
-export interface UserResponse {
-  user: User | null;
+export interface UserResponse extends User {
+  profilePictureUrl: string;
 }
 
 export type UserInstanceType = data<UserType, UserCreationAttributes>;
