@@ -1,9 +1,8 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 interface PaginationProps {
   currentPage: number;
+  currentLimit: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
@@ -12,12 +11,10 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
+  currentLimit,
   onPageChange,
   onLimitChange,
 }): React.JSX.Element => {
-  const router = useRouter();
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-
   const handlePageChange = (page: number): void => {
     if (page >= 1 && page <= totalPages) {
       onPageChange(page);
@@ -28,7 +25,6 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     const newLimit = parseInt(e.target.value, 10);
-    setItemsPerPage(newLimit);
     onLimitChange(newLimit);
   };
 
@@ -77,15 +73,15 @@ const Pagination: React.FC<PaginationProps> = ({
         </button>
       </div>
 
-      <div className="flex items-center space-x-2 mt-4">
+      <div className="flex items-center space-x-2 mt-4 ">
         <label htmlFor="itemsPerPage" className="text-gray-700">
           Items per page:
         </label>
         <select
           id="itemsPerPage"
-          value={itemsPerPage}
+          value={currentLimit}
           onChange={handleLimitChange}
-          className="px-2 py-1 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-2 py-1 border border-gray-300 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 "
         >
           <option value={5}>5</option>
           <option value={10}>10</option>

@@ -9,7 +9,7 @@ import Profile from "../Profile";
 import { toast } from "react-toastify";
 
 const PrivateHeader: React.FC = (): React.JSX.Element => {
-  const { user, signout } = useContext(AuthContext);
+  const { user, signout, updateProfilePicture } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -103,6 +103,7 @@ const PrivateHeader: React.FC = (): React.JSX.Element => {
             toast.success("Signout Successful");
           }}
           onClose={handleCloseModal}
+          updateProfilePicture={updateProfilePicture}
         />
       )}
     </>

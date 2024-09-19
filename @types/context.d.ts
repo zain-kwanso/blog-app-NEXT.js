@@ -8,4 +8,5 @@ export interface AuthContextType {
   signin: (email: string, password: string) => Promise<boolean>;
   signout: () => void;
   verifyOtp: (email: string, otp: string) => Promise<boolean>;
+  updateProfilePicture: (url: string) => void;
 }

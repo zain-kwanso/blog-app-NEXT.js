@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { AuthContext } from "@/context/authContext";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import axiosInstance from "@/utils/axiosInstance";
 import { url } from "@/utils/URL";
+import withNoAuth from "@/components/withNoAuth";
 
 const OTPPage: React.FC = () => {
   const [otp, setOtp] = useState("");
@@ -20,7 +20,6 @@ const OTPPage: React.FC = () => {
     sendOTP();
   }, [email]);
 
-  // Countdown timer for 1-minute delay to resend OTP
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (timer > 0) {
@@ -35,7 +34,6 @@ const OTPPage: React.FC = () => {
     };
   }, [timer]);
 
-  // Function to handle OTP submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -113,4 +111,4 @@ const OTPPage: React.FC = () => {
   );
 };
 
-export default OTPPage;
+export default withNoAuth(OTPPage);

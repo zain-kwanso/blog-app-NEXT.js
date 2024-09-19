@@ -21,7 +21,7 @@ const initialAuthContext: AuthContextType = {
   verifyOtp: async (email, otp) => {
     return true;
   },
-
+  updateProfilePicture: (url: string) => {},
   signout: () => {},
 };
 
@@ -53,6 +53,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  // Update profile picture function
+  const updateProfilePicture = (profilePictureUrl: string) => {
+    setUser((prevUser) => {
+      if (!prevUser) return null;
+      return { ...prevUser, profilePictureUrl };
+    });
+  };
 
   // verify-otp function
   const verifyOtp = async (email: string, otp: string) => {
@@ -112,7 +120,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ loading, user, email, signup, signin, signout, verifyOtp }}
+      value={{
+        loading,
+        user,
+        email,
+        signup,
+        signin,
+        signout,
+        verifyOtp,
+        updateProfilePicture,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,7 +1,6 @@
 import useDebounce from "@/hooks/useDebounce";
 import { useEffect, useRef } from "react";
 
-// Define the props for the SearchBar
 interface SearchBarProps {
   search: string;
   setSearch: (value: string) => void;
@@ -20,7 +19,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setSearch(e.target.value);
   };
 
-  // UseEffect to trigger the search after debounce time
   useEffect(() => {
     if (
       hasMounted.current &&

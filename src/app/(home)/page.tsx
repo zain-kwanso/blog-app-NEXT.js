@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useContext } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/components/Pagination";
 import Swal from "sweetalert2";
 import SearchBar from "@/components/SearchBar";
@@ -15,9 +15,18 @@ import useDeletePost from "@/hooks/useDeletePost";
 import { toast } from "react-toastify";
 
 const HomePage = () => {
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const searchParams = useSearchParams();
+
+  const initialPage = searchParams.get("page")
+    ? Number(searchParams.get("page"))
+    : 1;
+  const initialLimit = searchParams.get("limit")
+    ? Number(searchParams.get("limit"))
+    : 10;
+
+  const [itemsPerPage, setItemsPerPage] = useState<number>(initialLimit);
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [activeTab, setActiveTab] = useState("allPosts");
   const { posts, pagination, loading, fetchAllPosts } = useFetchAllPosts();
   const {
@@ -130,7 +139,6 @@ const HomePage = () => {
 
   return (
     <>
-      {/* Sticky Header */}
       <div className="sticky top-16 bg-white shadow-md z-10 px-4 w-full py-4">
         <div className="w-full flex justify-between items-center max-w-7xl mx-auto">
           <div className="w-1/2 pr-4">
@@ -153,9 +161,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="pt-20 flex flex-col min-h-screen justify-between">
-        {/* Tab Section */}
         <div className="w-full max-w-4xl px-4">
           <div className="border-b border-gray-300">
             <div className="flex justify-start">
@@ -185,7 +191,6 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Post Cards Section */}
         <div className="flex-grow w-full flex flex-col items-start">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-4 p-4">
@@ -221,6 +226,7 @@ const HomePage = () => {
               <Pagination
                 currentPage={currentPage}
                 totalPages={pagination?.totalPages}
+                currentLimit={itemsPerPage}
                 onPageChange={handlePageChange}
                 onLimitChange={handleLimitChange}
               />

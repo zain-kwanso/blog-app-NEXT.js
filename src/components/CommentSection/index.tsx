@@ -11,7 +11,7 @@ import { AuthContext } from "@/context/authContext";
 import { toast } from "react-toastify";
 
 interface CommentsSectionProps {
-  postId: number; // The post ID passed from the parent component
+  postId: number;
 }
 
 const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
@@ -104,7 +104,6 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
     level: number = 0
   ): JSX.Element[] => {
     return comments?.map((comment) => {
-      // Determine the profile picture URL (use the provided URL or fallback to the placeholder)
       const profilePictureUrl = comment?.User?.profilePictureUrl
         ? comment.User.profilePictureUrl
         : "https://generated.vusercontent.net/placeholder-user.jpg";
@@ -115,14 +114,13 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
           className={`ml-${level * 4} mt-2 border-l-2 pl-4`}
         >
           <div className="flex items-start gap-4">
-            {/* Profile Picture using Next.js Image */}
             <div className="w-8 h-8 border rounded-full overflow-hidden">
               <Image
-                src={profilePictureUrl} // Dynamic or fallback profile picture URL
+                src={profilePictureUrl}
                 alt={`${comment?.User?.name || "User"}'s profile picture`}
-                width={32} // Specify the width
-                height={32} // Specify the height
-                className="rounded-full object-cover" // Ensure the image is rounded and covers the container
+                width={32}
+                height={32}
+                className="rounded-full object-cover"
               />
             </div>
             <div className="grid gap-1">
@@ -134,7 +132,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
               </p>
             </div>
           </div>
-          {/* Admin or Author Delete Button */}
+
           {(comment?.UserId === user?.id || user?.isAdmin) && (
             <button
               className="text-red-500 text-xs"
@@ -143,7 +141,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
               Delete
             </button>
           )}
-          {/* Reply Button (Level 0 Only) */}
+
           {level < 1 && user && (
             <button
               className="text-blue-500 text-xs ml-2"
@@ -207,7 +205,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
                 </div>
               </div>
             )}
-          {/* Render Replies Recursively */}
+
           {comment.replies &&
             comment.replies.length > 0 &&
             renderComments(comment.replies, level + 1)}
@@ -239,13 +237,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
         </div>
       </div>
 
-      {/* Add Comment Section */}
       {user && (
         <div className="mt-8">
           <h3 className="text-lg font-bold">Add a comment</h3>
           <div className="mt-4 grid gap-4">
             <div className="grid grid-cols-[48px_1fr] items-start gap-4">
-              {/* User Profile Picture */}
               <div className="w-12 h-12 border rounded-full">
                 <span className="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12 border">
                   <Image

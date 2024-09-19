@@ -1,21 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useContext, useEffect } from "react";
-import { AuthContext } from "@/context/authContext";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { getToken } from "@/utils/authUtils";
+import useCustomNavigation from "@/hooks/useCustomNavigation";
 
 const withAuth = (WrappedComponent: React.ComponentType<any>) => {
   const AuthenticatedComponent = (props: any) => {
     const token = getToken();
-
-    const router = useRouter();
+    const { navigateToHomePage } = useCustomNavigation();
 
     useEffect(() => {
       if (!token) {
         toast.error("Please Login First");
-        router.push("/");
+        navigateToHomePage();
       }
     }, []);
 
