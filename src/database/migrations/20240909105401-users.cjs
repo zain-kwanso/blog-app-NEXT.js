@@ -22,6 +22,7 @@ module.exports = {
           isEmail: true,
         },
       },
+
       password: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -39,6 +40,23 @@ module.exports = {
       isAdmin: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
+      },
+      otp: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      otpExpiration: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+
+      profileKey: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
     });
   },
