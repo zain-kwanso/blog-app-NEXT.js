@@ -65,8 +65,10 @@ export const getProfileFromToken = async (
     if (!user) {
       throw new Error("User not found");
     }
-
-    const profilePictureUrl = await generatePresignedUrl(user.profileKey);
+    let profilePictureUrl = "";
+    if (user?.profileKey) {
+      profilePictureUrl = await generatePresignedUrl(user.profileKey);
+    }
 
     const userData = user.toJSON();
 
@@ -93,7 +95,8 @@ export async function verifyOTP(
   });
 
   if (!user) {
-    return null;
+    console.log("*************************************************");
+    return null; //error throw
   }
 
   user.isVerified = true;

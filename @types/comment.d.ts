@@ -1,5 +1,5 @@
 import { Optional } from "sequelize";
-// import { data } from "../squelize";
+import { data } from "../squelize";
 
 export interface CommentAttribubtes {
   id: number;
@@ -8,17 +8,21 @@ export interface CommentAttribubtes {
   PostId: number;
   ParentId?: number;
 }
+export interface UserForComment {
+  name: string;
+  profileKey: string;
+}
 
 export interface CommentCreationAttributes
   extends Optional<CommentAttributes, "id" | "UserId"> {}
 
 export type CommentInstance = data<Comment, CommentCreationAttributes>;
 
-export interface Comment extends CommentAttribubtes {
+export interface CommentType extends CommentAttribubtes {
   createdAt: string;
   updatedAt: string;
   User: UserForComment;
-  replies?: Comment[];
+  replies?: CommentType[];
 }
 
 export type CommentResponse = Comment[];

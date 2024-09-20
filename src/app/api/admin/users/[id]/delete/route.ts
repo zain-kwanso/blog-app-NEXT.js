@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/middleware/auth";
 import { deleteUserById } from "@/services/userService";
 
-// API to delete a user
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }

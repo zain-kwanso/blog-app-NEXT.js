@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/middleware/auth";
 import { deleteCommentService } from "@/services/commentService";
 
-// API to delete a comment
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }

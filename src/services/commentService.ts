@@ -1,5 +1,6 @@
 import { Comment, User } from "@/database/models/associations";
 import { generatePresignedUrl } from "./s3Service";
+import { CommentType } from "../../@types/comment";
 
 // Service to create a new comment
 export const createCommentService = async (
@@ -50,7 +51,6 @@ export const deleteCommentService = async (
 };
 
 export const getPostCommentsService = async (postId: number) => {
-  // Fetch comments along with user information, including the profileKey
   const comments = await Comment.findAll({
     where: {
       PostId: postId,
@@ -64,29 +64,26 @@ export const getPostCommentsService = async (postId: number) => {
         include: [
           {
             model: User,
-            attributes: ["name", "profileKey"], // Fetch the profileKey along with the name
+            attributes: ["name", "profileKey"],
           },
         ],
       },
       {
         model: User,
-        attributes: ["name", "profileKey"], // Fetch the profileKey along with the name
+        attributes: ["name", "profileKey"],
       },
     ],
     order: [["createdAt", "ASC"]],
   });
 
-  // Iterate through the comments and generate profilePictureUrls
   const commentsWithProfilePicture = await Promise.all(
     //@ts-ignore
     comments.map(async (comment) => {
-      // Check if the main comment has a User and a profileKey
       let profilePictureUrl = null;
       if (comment.User && comment.User.profileKey) {
         profilePictureUrl = await generatePresignedUrl(comment.User.profileKey);
       }
 
-      // Check if the comment has replies and process each reply's user information
       const repliesWithProfilePicture = comment.replies
         ? await Promise.all(
             //@ts-ignore
