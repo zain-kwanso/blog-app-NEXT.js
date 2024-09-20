@@ -8,4 +8,5 @@ export const routeUrl = {
   createPost: `/posts/create`,
   editPost: `/posts/:postId/edit`,
   previewPost: `/posts/:postId/preview`,
+  admin: `/admin`,
 };

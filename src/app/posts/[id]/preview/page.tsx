@@ -1,6 +1,9 @@
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import CommentsSection from "@/components/CommentSection";
 import PostContent from "@/components/PostContent";
 import fetchPost from "@/services/frontendPostService";
+import Loading from "./loading";
 
 export default async function PreviewPostPage({
   params,
@@ -8,13 +11,16 @@ export default async function PreviewPostPage({
   params: { id: string };
 }) {
   const postId = parseInt(params.id, 10);
-  const post = await fetchPost(postId); 
+  const post = await fetchPost(postId);
 
   return (
     <div className="w-full max-w-4xl mx-auto py-8 px-4 md:px-6">
       {post ? (
         <>
-          <PostContent post={post} />
+          <Suspense fallback={<Loading />}>
+            <PostContent post={post} />
+          </Suspense>
+
           <CommentsSection postId={postId} />
         </>
       ) : (
@@ -28,8 +34,6 @@ export default async function PreviewPostPage({
           </div>
         </div>
       )}
-      {/* <PostContent post={post} /> Server Component */}
-      {/* <CommentsSection postId={params.id} /> Client Component */}
     </div>
   );
 }

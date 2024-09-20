@@ -1,8 +1,5 @@
 import { Post, User } from "@/database/models/associations";
-import { Op, Sequelize } from "sequelize";
-import { PostResponse } from "../../@types/post";
-import axiosInstance from "@/utils/axiosInstance";
-import { url } from "@/utils/URL";
+import { Op } from "sequelize";
 
 //create post service
 export const createPost = async (

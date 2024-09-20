@@ -35,9 +35,9 @@ export async function GET(req: NextRequest) {
         previousPage,
       } = await getPostsByUser(parseInt(userId, 10), page, limit, search);
 
-      if (posts.length === 0) {
-        return NextResponse.json({ error: "No posts found" }, { status: 404 });
-      }
+      // if (posts.length === 0) {
+      //   return NextResponse.json({ error: "No posts found" }, { status: 404 });
+      // }
 
       return NextResponse.json(
         {
@@ -66,9 +66,9 @@ export async function GET(req: NextRequest) {
       previousPage,
     } = await getAllPosts(page, limit, search);
 
-    if (posts.length === 0) {
-      return NextResponse.json({ error: "No posts found" }, { status: 404 });
-    }
+    // if (posts.length === 0) {
+    //   return NextResponse.json({ error: "No posts found" }, { status: 404 });
+    // }
 
     return NextResponse.json(
       {

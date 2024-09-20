@@ -82,6 +82,7 @@ const OTPPage: React.FC = () => {
               className="w-full px-3 py-2 border rounded-lg"
               required
               maxLength={6}
+              minLength={6}
               disabled={isSubmitting}
             />
           </div>

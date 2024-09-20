@@ -135,7 +135,7 @@ const Profile: React.FC<UserDetailsProps> = ({
                 alt="Profile Picture"
                 width={80}
                 height={80}
-                className="w-20 h-20 rounded-full mr-4"
+                className="rounded-full mr-4"
               />
               <button
                 className="absolute bottom-0 right-0 bg-white rounded-full p-1"

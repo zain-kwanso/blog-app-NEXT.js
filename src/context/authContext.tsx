@@ -3,7 +3,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getToken, setToken, removeToken } from "@/utils/authUtils";
 import { useRouter } from "next/navigation";
-import { User, UserResponse } from "../../@types/user";
+import { UserResponse } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
 import { url } from "@/utils/URL";
 import axiosInstance from "@/utils/axiosInstance";

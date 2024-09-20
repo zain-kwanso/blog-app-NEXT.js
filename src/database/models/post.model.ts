@@ -3,7 +3,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "../config/database";
 import { PostInstance } from "../../../@types/post";
 
-const Post = sequelize.define<PostInstance>("Posts", {
+const Post: PostInstance = sequelize.define<PostInstance>("Posts", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import User from "../../../database/models/user.model";
 
-// Handle GET requests to fetch users
 export async function GET() {
   try {
     const users = await User.findAll();
@@ -16,7 +15,6 @@ export async function GET() {
   }
 }
 
-// Handle POST requests to create a new user
 export async function POST(req: Request) {
   try {
     const { name, email, password } = await req.json();
@@ -24,7 +22,7 @@ export async function POST(req: Request) {
     const newUser = await User.create({
       name,
       email,
-      password, // Ideally hash the password before saving
+      password,
     });
 
     return NextResponse.json(newUser);

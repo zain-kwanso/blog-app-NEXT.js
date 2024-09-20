@@ -16,6 +16,8 @@ import { toast } from "react-toastify";
 
 const HomePage = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { user } = useContext(AuthContext);
 
   const initialPage = searchParams.get("page")
     ? Number(searchParams.get("page"))
@@ -33,9 +35,9 @@ const HomePage = () => {
     navigateToPreviewPostPage,
     navigateToCreatePostPage,
     navigateToEditPostPage,
+    navigateToAdminPage,
   } = useCustomNavigation();
-  const { user } = useContext(AuthContext);
-  const { deletePost, error } = useDeletePost();
+  const { deletePost, error, loading: deleteLoading } = useDeletePost();
 
   useEffect(() => {
     if (activeTab === "userPosts") {
@@ -49,8 +51,6 @@ const HomePage = () => {
       fetchAllPosts({ page: currentPage, limit: itemsPerPage, search });
     }
   }, [currentPage, itemsPerPage, activeTab]);
-
-  const router = useRouter();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -137,6 +137,10 @@ const HomePage = () => {
     );
   };
 
+  const handleAdminPanel = () => {
+    navigateToAdminPage();
+  };
+
   return (
     <>
       <div className="sticky top-16 bg-white shadow-md z-10 px-4 w-full py-4">
@@ -148,16 +152,24 @@ const HomePage = () => {
               fetchPostsWithSearch={fetchPostsWithSearch}
             />
           </div>
-          {user && (
-            <div className="flex justify-end">
+          <div className="flex justify-end space-x-4">
+            {user?.isAdmin && (
+              <button
+                onClick={handleAdminPanel}
+                className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
+              >
+                Admin Panel
+              </button>
+            )}
+            {user && (
               <button
                 onClick={handleCreatePost}
-                className="bg-purple-600 text-white py-2 px-6 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-all duration-300"
+                className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-all duration-300"
               >
                 Create Post
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
@@ -216,13 +228,14 @@ const HomePage = () => {
                     onEdit={handleEditPost}
                     isUserPost={post.UserId === user?.id}
                     isAdmin={user?.isAdmin!}
+                    deleteLoading={deleteLoading}
                   />
                 ))
               )}
             </div>
           )}
           <div className="w-full px-4 mt-4">
-            {!loading && posts?.length > 0 && (
+            {!loading && (
               <Pagination
                 currentPage={currentPage}
                 totalPages={pagination?.totalPages}

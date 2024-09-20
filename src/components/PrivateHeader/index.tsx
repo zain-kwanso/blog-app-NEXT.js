@@ -7,11 +7,13 @@ import { AuthContext } from "@/context/authContext";
 import { FaUser } from "react-icons/fa";
 import Profile from "../Profile";
 import { toast } from "react-toastify";
+import useCustomNavigation from "@/hooks/useCustomNavigation";
 
 const PrivateHeader: React.FC = (): React.JSX.Element => {
   const { user, signout, updateProfilePicture } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { navigateToLoginPage } = useCustomNavigation();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
@@ -99,6 +101,7 @@ const PrivateHeader: React.FC = (): React.JSX.Element => {
           user={user}
           onSignOut={() => {
             signout();
+            navigateToLoginPage();
             handleCloseModal();
             toast.success("Signout Successful");
           }}

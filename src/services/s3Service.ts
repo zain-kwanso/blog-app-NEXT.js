@@ -13,7 +13,6 @@ const s3Client = new S3Client({
   },
 });
 
-// Upload function (same as before)
 export async function uploadFileToS3(
   userId: number,
   fileName: string,

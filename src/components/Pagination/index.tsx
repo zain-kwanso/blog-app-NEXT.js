@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+
 interface PaginationProps {
   currentPage: number;
   currentLimit: number;
@@ -27,6 +30,15 @@ const Pagination: React.FC<PaginationProps> = ({
     const newLimit = parseInt(e.target.value, 10);
     onLimitChange(newLimit);
   };
+
+  useEffect(() => {
+    if (!(currentPage >= 1 && currentPage <= totalPages)) {
+      toast.error(
+        "The page you are trying to access doesn't exist. Redirecting to the first page."
+      );
+      onPageChange(1);
+    }
+  }, [currentPage, totalPages, onPageChange]);
 
   const prevPage = currentPage - 1;
   const nextPage = currentPage + 1;

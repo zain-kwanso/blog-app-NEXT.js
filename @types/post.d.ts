@@ -1,5 +1,5 @@
 import { Optional } from "sequelize";
-// import { data } from "../squelize";
+import { data } from "../squelize";
 
 export interface Post {
   id: number;
