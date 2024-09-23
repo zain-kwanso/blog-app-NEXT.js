@@ -7,7 +7,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "migration:create": "dotenv -- sequelize-cli migration:create",
     "migrate": "dotenv -- ts-node sequelize.js",
     "migrate:rollback": "dotenv -- sequelize-cli db:migrate:undo",
