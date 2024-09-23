@@ -15,7 +15,7 @@ export interface User {
 export interface UserType extends User {
   email: string;
   password: string;
-  otp: string;
+  verificationToken: string;
   otpExpiration: Date;
   isVerified: boolean;
 }

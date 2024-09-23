@@ -31,7 +31,7 @@ const User: UserInstanceType = sequelize.define<UserInstanceType>(
     isAdmin: {
       type: DataTypes.BOOLEAN,
     },
-    otp: {
+    verificationToken: {
       type: DataTypes.STRING,
       allowNull: true,
     },

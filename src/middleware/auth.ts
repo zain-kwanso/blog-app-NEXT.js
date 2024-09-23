@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProfileFromToken } from "../services/authService"; // Adjust the path accordingly
+import { getProfileFromToken } from "../services/authService";
 import { VerifyTokenResult } from "../../@types/module";
 
 export const verifyToken = async (

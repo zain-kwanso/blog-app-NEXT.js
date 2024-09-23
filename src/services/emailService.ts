@@ -6,24 +6,26 @@ export function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-export async function sendOTPEmail(email: string, otp: string) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
+export async function sendVerificationEmail(
+  email: string,
+  verificationUrl: string
+) {
   const msg = {
     to: email,
     from: process.env.SENDGRID_SENDER_EMAIL!,
     subject: "Verify Your Email Address",
-    text: `Please use the following verification code to verify your email: ${otp}`,
-    html: `<p>Use the following code to verify your email:</p><h2>${otp}</h2>`,
+    text: `Please verify your email by clicking the following link: ${verificationUrl}`,
+    html: `<p>Please verify your email by clicking the following link:</p><a href="${verificationUrl}">Verify Email</a>`,
   };
 
   try {
     await sgMail.send(msg);
-    console.log("OTP email sent successfully");
+    console.log("Verification email sent successfully");
   } catch (error) {
-    console.error("Error sending OTP email:", error);
-
-    throw new Error("Failed to send OTP email");
+    console.error("Error sending verification email:", error);
+    throw new Error("Failed to send verification email");
   }
 }
 

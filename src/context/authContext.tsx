@@ -7,6 +7,7 @@ import { UserResponse } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
 import { url } from "@/utils/URL";
 import axiosInstance from "@/utils/axiosInstance";
+import axios from "axios";
 
 const initialAuthContext: AuthContextType = {
   user: null,
@@ -87,28 +88,51 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
       });
-      setEmail(email);
 
       return true;
     } catch (error) {
-      console.error("Sign-up error:", error);
-      throw error;
+      if (axios.isAxiosError(error) && error.response) {
+        const status = error.response.status;
+        if (status === 409) {
+          throw new Error("User already exists. Please log in.");
+        } else if (status === 400) {
+          throw new Error("Invalid input. Please check your form.");
+        } else {
+          throw new Error(
+            error.response.data.error || "An error occurred during signup."
+          );
+        }
+      } else {
+        throw new Error("An error occurred. Please try again later.");
+      }
     }
   };
-
   // Sign in function
-  const signin = async (email: string, password: string) => {
+  const signin = async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await axiosInstance.post(url.signin, {
         email,
         password,
       });
-      setEmail(email);
-      return true;
+
+      if (response.data.token) {
+        setEmail(email);
+        setToken(response.data.token);
+        await fetchUser();
+        return true;
+      }
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 401) {
+          return false;
+        }
+      }
+
       console.error("Sign-in error:", error);
       throw error;
     }
+
+    return false;
   };
 
   // Sign out function

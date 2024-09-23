@@ -5,17 +5,17 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { signupValidationSchema } from "@/validation/validationSchema";
-import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { UserCreationAttributes } from "../../../@types/user";
 import { AuthContext } from "@/context/authContext";
+import axios from "axios";
+
 const SignupForm: React.FC = (): React.JSX.Element => {
   const { signup } = useContext(AuthContext);
-  const { navigateToOTPVerificationPage } = useCustomNavigation();
 
   const defaultSignupValues: UserCreationAttributes = {
-    name: "default",
-    email: "default@example.com",
-    password: "password123",
+    name: "",
+    email: "",
+    password: "",
   };
 
   const {
@@ -25,15 +25,16 @@ const SignupForm: React.FC = (): React.JSX.Element => {
   } = useForm<UserCreationAttributes>({
     resolver: yupResolver(signupValidationSchema),
     defaultValues: defaultSignupValues,
+    mode: "onChange",
   });
 
   const onSubmit: SubmitHandler<UserCreationAttributes> = async (data) => {
     try {
       const { name, email, password } = data;
       await signup(name, email, password);
-      navigateToOTPVerificationPage();
+      toast.success("Verification Email Sent");
     } catch (error) {
-      toast.error("An error occurred during signup");
+      toast.error((error as Error).message);
     }
   };
 

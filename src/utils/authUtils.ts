@@ -1,7 +1,9 @@
 const TOKEN_KEY = "Blog_App_Token";
 
 export const getToken = () => {
-  return localStorage.getItem(TOKEN_KEY);
+  if (typeof window !== "undefined") {
+    return localStorage.getItem(TOKEN_KEY);
+  }
 };
 
 export const setToken = (token: string) => {

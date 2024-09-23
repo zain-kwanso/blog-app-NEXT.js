@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateOTP, sendOTPEmail } from "@/services/otpService";
+import { generateOTP, sendOTPEmail } from "@/services/emailService";
 import User from "@/database/models/user.model";
 
 export async function POST(req: NextRequest) {

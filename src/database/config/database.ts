@@ -16,7 +16,6 @@ const sequelize =
       port: Number(process.env.DB_PORT!),
       dialect: "postgres",
       dialectModule: pg,
-      logging: false,
     }
   );
 

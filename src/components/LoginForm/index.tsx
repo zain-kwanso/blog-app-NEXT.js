@@ -10,7 +10,7 @@ import { useContext } from "react";
 import { AuthContext } from "@/context/authContext";
 
 const LoginForm: React.FC = (): React.JSX.Element => {
-  const { navigateToOTPVerificationPage } = useCustomNavigation();
+  const { navigateToHomePage } = useCustomNavigation();
   const { signin } = useContext(AuthContext);
 
   const defaultLoginValues: UserLoginAttributes = {
@@ -25,12 +25,20 @@ const LoginForm: React.FC = (): React.JSX.Element => {
   } = useForm<UserLoginAttributes>({
     resolver: yupResolver(loginValidationSchema),
     defaultValues: defaultLoginValues,
+    mode: "onChange",
   });
 
   const onSubmit: SubmitHandler<UserLoginAttributes> = async (data) => {
     try {
-      await signin(data.email, data.password);
-      navigateToOTPVerificationPage();
+      const isVerified = await signin(data.email, data.password);
+
+      if (isVerified) {
+        toast.success("Login Successful.");
+        navigateToHomePage();
+      } else {
+        toast.warning("Please verify your email first.");
+        // navigateToVerifyPage();
+      }
     } catch (error) {
       toast.error("Invalid Credentials!");
     }
