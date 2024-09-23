@@ -95,7 +95,6 @@ export async function verifyOTP(
   });
 
   if (!user) {
-    console.log("*************************************************");
     return null; //error throw
   }
 

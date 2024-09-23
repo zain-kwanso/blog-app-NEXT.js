@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import CommentsSection from "@/components/CommentSection";
 import PostContent from "@/components/PostContent";

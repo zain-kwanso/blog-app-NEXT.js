@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
-import { ReplyComment, Comment } from "../../../@types/comment";
+import { ReplyComment, CommentType } from "../../../@types/comment";
 import useFetchComments from "@/hooks/useFetchComments";
 import { useCreateComment } from "@/hooks/useCreateComment";
 import CommentSkeleton from "../CommentSkeleton";
@@ -100,7 +100,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   };
 
   const renderComments = (
-    comments: Comment[],
+    comments: CommentType[],
     level: number = 0
   ): JSX.Element[] => {
     return comments?.map((comment) => {
@@ -221,8 +221,6 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
         <div className="flex-grow overflow-auto mb-4">
           {loading ? (
             <>
-              <CommentSkeleton />
-              <CommentSkeleton />
               <CommentSkeleton />
             </>
           ) : error ? (

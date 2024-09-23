@@ -10,7 +10,7 @@ export interface CommentAttribubtes {
 }
 export interface UserForComment {
   name: string;
-  profileKey: string;
+  profilePictureUrl: string;
 }
 
 export interface CommentCreationAttributes
@@ -25,7 +25,7 @@ export interface CommentType extends CommentAttribubtes {
   replies?: CommentType[];
 }
 
-export type CommentResponse = Comment[];
+export type CommentResponse = CommentType[];
 
 export interface ReplyComment {
   [key: number]: string | null;

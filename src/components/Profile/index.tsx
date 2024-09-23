@@ -27,6 +27,7 @@ const Profile: React.FC<UserDetailsProps> = ({
   );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true); // State for image loading
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +70,7 @@ const Profile: React.FC<UserDetailsProps> = ({
       setProfilePicture(data.fileUrl);
       setPreviewUrl(null);
       updateProfilePicture(data.fileUrl);
-      toast.success("Profile Picture Upated Successfully.");
+      toast.success("Profile Picture Updated Successfully.");
     } catch (error) {
       console.error("Error uploading file", error);
       toast.error("Error Uploading File.");
@@ -100,12 +101,20 @@ const Profile: React.FC<UserDetailsProps> = ({
         <div className="flex items-center mb-4">
           {previewUrl ? (
             <div className="relative">
+              {imageLoading && (
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <FaSpinner className="animate-spin text-gray-500" />
+                </div>
+              )}
               <Image
                 src={previewUrl}
                 alt="Preview Picture"
                 width={80}
                 height={80}
-                className="w-20 h-20 rounded-full mr-4"
+                className={`w-20 h-20 rounded-full mr-4 ${
+                  imageLoading ? "opacity-0" : "opacity-100"
+                }`}
+                onLoadingComplete={() => setImageLoading(false)}
               />
               <button
                 className="absolute bottom-0 right-0 bg-white rounded-full p-1"
@@ -127,6 +136,11 @@ const Profile: React.FC<UserDetailsProps> = ({
             </div>
           ) : (
             <div className="relative">
+              {imageLoading && (
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <FaSpinner className="animate-spin text-gray-500" />
+                </div>
+              )}
               <Image
                 src={
                   profilePicture ||
@@ -135,7 +149,10 @@ const Profile: React.FC<UserDetailsProps> = ({
                 alt="Profile Picture"
                 width={80}
                 height={80}
-                className="rounded-full mr-4"
+                className={`w-20 h-20 rounded-full mr-4 ${
+                  imageLoading ? "opacity-0" : "opacity-100"
+                }`}
+                onLoadingComplete={() => setImageLoading(false)}
               />
               <button
                 className="absolute bottom-0 right-0 bg-white rounded-full p-1"

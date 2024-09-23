@@ -142,7 +142,7 @@ const HomePage = () => {
   };
 
   return (
-    <>
+    <div className="">
       <div className="sticky top-16 bg-white shadow-md z-10 px-4 w-full py-4">
         <div className="w-full flex justify-between items-center max-w-7xl mx-auto">
           <div className="w-1/2 pr-4">
@@ -247,7 +247,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <div className="flex flex-col min-h-screen h-full justify-between relative">
+          <div className=" flex flex-col min-h-screen h-full justify-between relative">
             <ClientHeader />
 
             <ToastContainer />

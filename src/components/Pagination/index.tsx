@@ -32,13 +32,11 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   useEffect(() => {
-    if (!(currentPage >= 1 && currentPage <= totalPages)) {
-      toast.error(
-        "The page you are trying to access doesn't exist. Redirecting to the first page."
-      );
+    if (totalPages >= 1 && currentPage > totalPages) {
+      toast.error("The page you are trying to access doesn't exist.");
       onPageChange(1);
     }
-  }, [currentPage, totalPages, onPageChange]);
+  }, [currentPage, totalPages]);
 
   const prevPage = currentPage - 1;
   const nextPage = currentPage + 1;
@@ -78,7 +76,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
         <button
           onClick={() => handlePageChange(nextPage)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages}
           className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-50 transition-colors hover:bg-gray-600"
         >
           Next
