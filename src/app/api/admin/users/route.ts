@@ -1,10 +1,10 @@
-import { verifyToken } from "@/middleware/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { getUsersWithPostCount } from "@/services/userService";
+import { getUserAction } from "@/app/actions/auth";
 
 export async function GET(req: NextRequest) {
-  const tokenVerification = await verifyToken(req);
-  if (!tokenVerification.isValid || !tokenVerification.user?.isAdmin) {
+  const user = await getUserAction();
+  if (!user?.isAdmin) {
     return NextResponse.json(
       { error: "Access denied. Admins only." },
       { status: 403 }

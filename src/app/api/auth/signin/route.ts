@@ -1,12 +1,14 @@
 // src/app/api/auth/signin/route.ts
+import { createSession } from "@/app/lib/session";
 import { signinService } from "@/services/authService";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    const { token, isVerified } = await signinService(email, password);
+    const { token, isVerified, user } = await signinService(email, password);
 
     if (!isVerified) {
       return NextResponse.json(
@@ -21,7 +23,7 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     }
-
+    createSession(user.id);
     return NextResponse.json({ token }, { status: 200 });
   } catch (error: unknown) {
     if (error instanceof Error) {

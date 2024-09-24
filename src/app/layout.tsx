@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/authContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ClientHeader from "@/components/ClientHeader";
+import ClientInterceptorSetup from "@/components/responseInterceptor";
 
 export const metadata: Metadata = {
   title: "Blog App",
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <div className=" flex flex-col min-h-screen h-full justify-between relative">
+            <ClientInterceptorSetup />
             <ClientHeader />
 
             <ToastContainer />

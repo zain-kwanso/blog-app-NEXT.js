@@ -33,7 +33,7 @@ export const signupService = async (
 export const signinService = async (
   email: string,
   password: string
-): Promise<{ token: string | null; isVerified: boolean }> => {
+): Promise<{ token: string | null; isVerified: boolean; user: UserType }> => {
   const user = await User.scope("withPassword").findOne({
     where: { email },
   });
@@ -48,7 +48,7 @@ export const signinService = async (
   }
 
   const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: "24h" });
-  return { token, isVerified: user.isVerified };
+  return { token, isVerified: user.isVerified, user };
 };
 
 // get profile service

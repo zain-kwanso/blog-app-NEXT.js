@@ -1,17 +1,14 @@
 "use client";
 
-import React, { useContext } from "react";
+import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { signupValidationSchema } from "@/validation/validationSchema";
 import { UserCreationAttributes } from "../../../@types/user";
-import { AuthContext } from "@/context/authContext";
-import axios from "axios";
+import { signupAction } from "@/app/actions/auth";
 
 const SignupForm: React.FC = (): React.JSX.Element => {
-  const { signup } = useContext(AuthContext);
-
   const defaultSignupValues: UserCreationAttributes = {
     name: "",
     email: "",
@@ -30,11 +27,24 @@ const SignupForm: React.FC = (): React.JSX.Element => {
 
   const onSubmit: SubmitHandler<UserCreationAttributes> = async (data) => {
     try {
-      const { name, email, password } = data;
-      await signup(name, email, password);
-      toast.success("Verification Email Sent");
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+
+      const result = await signupAction(formData);
+
+      if (result?.status === 200) {
+        toast.success("Verification Email Sent Successfully.");
+      } else if (result?.status === 409) {
+        toast.error("User already exists. Please log in.");
+      } else {
+        toast.error(
+          result?.error || "An error occurred. Please try again later."
+        );
+      }
     } catch (error) {
-      toast.error((error as Error).message);
+      toast.error("An unexpected error occurred.");
     }
   };
 

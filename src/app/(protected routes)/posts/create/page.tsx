@@ -6,9 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { postValidationSchema } from "@/validation/validationSchema";
 import useCreatePost from "@/hooks/useCreatePost";
-import { PostFormData } from "../../../../@types/post";
+import { PostFormData } from "../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
-import withAuth from "@/components/withAuth";
 
 const CreatePostPage: React.FC = () => {
   const { createPost } = useCreatePost();
@@ -107,4 +106,4 @@ const CreatePostPage: React.FC = () => {
   );
 };
 
-export default withAuth(CreatePostPage);
+export default CreatePostPage;

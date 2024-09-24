@@ -1,13 +1,14 @@
 "use client";
 
 import React, { createContext, useState, useEffect } from "react";
-import { getToken, setToken, removeToken } from "@/utils/authUtils";
+import { setToken, removeToken } from "@/utils/authUtils";
 import { useRouter } from "next/navigation";
 import { UserResponse } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
 import { url } from "@/utils/URL";
 import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
+import { getUserAction } from "@/app/actions/auth";
 
 const initialAuthContext: AuthContextType = {
   user: null,
@@ -37,17 +38,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUser = async () => {
     setLoading(true);
-    const token = getToken();
-    if (token) {
-      try {
-        const response = await axiosInstance.get<UserResponse>(url.me);
-        setUser(response.data);
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
+
+    try {
+      const response = await getUserAction();
+
+      setUser(response);
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,7 +136,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Sign out function
-  const signout = () => {
+  const signout = async () => {
+    await axios.post("/api/auth/logout");
+
     setUser(null);
     removeToken();
     router.push("/login");

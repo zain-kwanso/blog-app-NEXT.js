@@ -7,9 +7,9 @@ import { toast } from "react-toastify";
 import { postValidationSchema } from "@/validation/validationSchema";
 import useEditPost from "@/hooks/useEditPost";
 import useFetchPost from "@/hooks/useFetchPost";
-import { PostFormData } from "../../../../../@types/post";
+import { PostFormData } from "../../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
-import withAuth from "@/components/withAuth";
+// import withAuth from "@/components/withAuth";
 
 const EditPostPage = ({ params }: { params: { id: string } }) => {
   const { editPost } = useEditPost();
@@ -123,4 +123,4 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default withAuth(EditPostPage);
+export default EditPostPage;

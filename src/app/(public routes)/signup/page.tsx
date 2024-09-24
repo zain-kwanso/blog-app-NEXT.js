@@ -1,10 +1,7 @@
-"use client";
-
 import React from "react";
 
 import Link from "next/link";
 import SignupForm from "@/components/SignupForm";
-import withNoAuth from "@/components/withNoAuth";
 
 const SignupPage: React.FC = (): React.JSX.Element => {
   return (
@@ -23,4 +20,4 @@ const SignupPage: React.FC = (): React.JSX.Element => {
   );
 };
 
-export default withNoAuth(SignupPage);
+export default SignupPage;

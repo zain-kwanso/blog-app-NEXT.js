@@ -4,11 +4,13 @@ import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import axios from "axios";
+import { backend_url, url } from "@/utils/URL";
+import axiosInstance from "@/utils/axiosInstance";
+// import { verifyEmailRequest } from "@/services/emailService";
 
-// Function to verify email using Axios
-const verifyEmailRequest = async (token: string) => {
+export const verifyEmailRequest = async (token: string) => {
   try {
-    const res = await axios.get(`/api/auth/verify-email`, {
+    const res = await axiosInstance.get(url.verify_email, {
       params: { token },
     });
 

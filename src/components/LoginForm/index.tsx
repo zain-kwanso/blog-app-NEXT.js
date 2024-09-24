@@ -6,12 +6,13 @@ import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { UserLoginAttributes } from "../../../@types/user";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginValidationSchema } from "@/validation/validationSchema";
-import { useContext } from "react";
+import { signinAction } from "@/app/actions/auth";
 import { AuthContext } from "@/context/authContext";
+import { useContext } from "react";
 
 const LoginForm: React.FC = (): React.JSX.Element => {
   const { navigateToHomePage } = useCustomNavigation();
-  const { signin } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const defaultLoginValues: UserLoginAttributes = {
     email: "default@example.com",
@@ -30,14 +31,13 @@ const LoginForm: React.FC = (): React.JSX.Element => {
 
   const onSubmit: SubmitHandler<UserLoginAttributes> = async (data) => {
     try {
-      const isVerified = await signin(data.email, data.password);
+      const { token } = await signinAction(data.email, data.password);
 
-      if (isVerified) {
+      if (token) {
         toast.success("Login Successful.");
         navigateToHomePage();
       } else {
         toast.warning("Please verify your email first.");
-        // navigateToVerifyPage();
       }
     } catch (error) {
       toast.error("Invalid Credentials!");

@@ -9,4 +9,5 @@ export const routeUrl = {
   editPost: `/posts/:postId/edit`,
   previewPost: `/posts/:postId/preview`,
   admin: `/admin`,
+  verifyEmail: `/verify-email`,
 };

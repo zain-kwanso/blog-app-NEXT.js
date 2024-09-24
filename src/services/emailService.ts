@@ -1,6 +1,8 @@
 // import nodemailer from "nodemailer";
 
+import { backend_url, url } from "@/utils/URL";
 import * as sgMail from "@sendgrid/mail";
+import axios from "axios";
 
 export function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();

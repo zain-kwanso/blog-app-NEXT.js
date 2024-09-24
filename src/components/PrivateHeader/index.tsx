@@ -8,9 +8,10 @@ import { FaUser } from "react-icons/fa";
 import Profile from "../Profile";
 import { toast } from "react-toastify";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
+import { logout } from "@/app/actions/auth";
 
 const PrivateHeader: React.FC = (): React.JSX.Element => {
-  const { user, signout, updateProfilePicture } = useContext(AuthContext);
+  const { user, updateProfilePicture } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { navigateToLoginPage } = useCustomNavigation();
@@ -100,7 +101,7 @@ const PrivateHeader: React.FC = (): React.JSX.Element => {
         <Profile
           user={user}
           onSignOut={() => {
-            signout();
+            logout();
             navigateToLoginPage();
             handleCloseModal();
             toast.success("Signout Successful");

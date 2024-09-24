@@ -7,12 +7,12 @@ import Swal from "sweetalert2";
 import SearchBar from "@/components/SearchBar";
 import PostCard from "@/components/PostCard";
 import useFetchAllPosts from "@/hooks/useFetchAllPost";
-import { Post } from "../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import Skeleton from "@/components/Skeleton";
 import { AuthContext } from "@/context/authContext";
 import useDeletePost from "@/hooks/useDeletePost";
 import { toast } from "react-toastify";
+import { Post } from "../../../../@types/post";
 
 const HomePage = () => {
   const searchParams = useSearchParams();

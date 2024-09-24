@@ -9,6 +9,7 @@ export const url = {
   verify_OTP: `/auth/verify-otp`,
   upload_profile: `/profile-picture-upload`,
   users: `/admin/users`,
+  verify_email: `/auth/verify-email`,
 };
 
 export const backend_url = "http://localhost:3000/api";

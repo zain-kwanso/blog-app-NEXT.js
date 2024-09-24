@@ -105,4 +105,4 @@ const AdminPanel = () => {
   );
 };
 
-export default withAuth(AdminPanel);
+export default AdminPanel;
