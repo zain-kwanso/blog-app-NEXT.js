@@ -1,9 +1,10 @@
 "use server";
 
-import { createCommentService } from "@/services/commentService";
+import {
+  createCommentService,
+  deleteCommentService,
+} from "@/services/commentService";
 import { getUserAction } from "@/app/actions/auth";
-import { validateFormData } from "@/validation/validateData";
-import { commentSchema } from "@/validation/validationSchema";
 
 export const createCommentAction = async (
   content: string,
@@ -31,6 +32,35 @@ export const createCommentAction = async (
     }
 
     return { data: comment, status: 200 };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return { error: errorMessage, status: 500 };
+  }
+};
+
+export const deleteCommentAction = async (commentId: number) => {
+  if (isNaN(commentId) || commentId <= 0) {
+    return { error: "Invalid comment ID", status: 400 };
+  }
+
+  const sessionUser = await getUserAction();
+  if (!sessionUser) {
+    return { error: "Forbidden", status: 403 };
+  }
+
+  try {
+    const result = await deleteCommentService(
+      commentId,
+      sessionUser.id,
+      sessionUser.isAdmin
+    );
+
+    if (!result.success) {
+      return { error: result.error, status: 403 };
+    }
+
+    return { message: result.message, status: 200 };
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";

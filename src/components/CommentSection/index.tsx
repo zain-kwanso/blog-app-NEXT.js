@@ -8,7 +8,10 @@ import CommentSkeleton from "../CommentSkeleton";
 import useDeleteComment from "@/hooks/useDeleteComment";
 import { AuthContext } from "@/context/authContext";
 import { toast } from "react-toastify";
-import { createCommentAction } from "@/app/actions/comment";
+import {
+  createCommentAction,
+  deleteCommentAction,
+} from "@/app/actions/comment";
 
 interface CommentsSectionProps {
   postId: number;
@@ -50,9 +53,14 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
 
   const handleDeleteComment = async (commentId: number) => {
     try {
-      await deleteComment(commentId);
-      fetchComments(postId);
-      toast.success("Comment deleted successfully.");
+      const response = await deleteCommentAction(commentId);
+      if (response.status === 200) {
+        fetchComments(postId);
+        toast.success("comment deleted successfully.");
+      } else {
+        console.error(response?.error);
+        toast.error("Failed to delete comments.");
+      }
     } catch (error) {
       console.error("Error deleting comment:", error);
       toast.error("Failed to delete comment.");
