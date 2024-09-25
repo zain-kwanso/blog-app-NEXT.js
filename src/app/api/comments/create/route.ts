@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/middleware/auth";
-import { validateRequest } from "@/middleware/validateRequest";
+import { validateRequest } from "@/validation/validateData";
 import { createCommentService } from "@/services/commentService";
-import { commentSchema } from "@/utils/validators";
+import { commentSchema } from "@/validation/validationSchema";
+import { getUserAction } from "@/app/actions/auth";
 
 export async function POST(req: NextRequest) {
-  const tokenVerification = await verifyToken(req);
-  if (!tokenVerification.isValid) {
-    return NextResponse.json(
-      { error: tokenVerification.error },
-      { status: 401 }
-    );
+  const sessionUser = await getUserAction();
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 401 });
   }
 
   const { isValid, body, errors } = await validateRequest(req, commentSchema);
@@ -19,11 +16,10 @@ export async function POST(req: NextRequest) {
   }
 
   const { content, PostId, ParentId } = body;
-  const { user } = tokenVerification;
 
   try {
     const comment = await createCommentService(
-      user?.id!,
+      sessionUser?.id!,
       PostId,
       content,
       ParentId

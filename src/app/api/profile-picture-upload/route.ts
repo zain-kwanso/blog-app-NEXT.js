@@ -1,19 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/middleware/auth";
 import { uploadFileToS3, generatePresignedUrl } from "@/services/s3Service";
 import User from "@/database/models/user.model";
+import { getUserAction } from "@/app/actions/auth";
 
 export async function POST(req: NextRequest) {
-  const tokenVerification = await verifyToken(req);
+  const sessionUser = await getUserAction();
 
-  if (!tokenVerification.isValid) {
-    return NextResponse.json(
-      { error: tokenVerification.error },
-      { status: 403 }
-    );
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-
-  const { user } = tokenVerification;
 
   try {
     const formData = await req.formData();
@@ -31,13 +26,13 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
     const profileKey = await uploadFileToS3(
-      user?.id!,
+      sessionUser?.id!,
       fileName,
       buffer,
       fileType
     );
 
-    await User.update({ profileKey }, { where: { id: user.id } });
+    await User.update({ profileKey }, { where: { id: sessionUser?.id } });
 
     const fileUrl = await generatePresignedUrl(profileKey);
 

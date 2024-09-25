@@ -1,28 +1,27 @@
 import { Comment, User } from "@/database/models/associations";
 import { generatePresignedUrl } from "./s3Service";
-import { CommentType } from "../../@types/comment";
 
 // Service to create a new comment
 export const createCommentService = async (
   userId: number,
-  PostId: number,
+  postId: number,
   content: string,
-  ParentId?: number
+  parentId?: number
 ) => {
-  if (!ParentId) {
+  if (!parentId) {
     return await Comment.create({
       UserId: userId,
-      PostId,
+      PostId: postId,
       content,
     });
   }
 
-  const parentComment = await Comment.findByPk(ParentId);
-  if (parentComment?.PostId === PostId) {
+  const parentComment = await Comment.findByPk(parentId);
+  if (parentComment?.PostId === postId) {
     return await Comment.create({
       UserId: userId,
-      ParentId,
-      PostId,
+      ParentId: parentId,
+      PostId: postId,
       content,
     });
   }

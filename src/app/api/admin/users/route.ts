@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUsersWithPostCount } from "@/services/userService";
+import { getUsers } from "@/services/userService";
 import { getUserAction } from "@/app/actions/auth";
 
 export async function GET(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const users = await getUsersWithPostCount();
+    const users = await getUsers();
     return NextResponse.json(users, { status: 200 });
   } catch (error) {
     console.log(error);

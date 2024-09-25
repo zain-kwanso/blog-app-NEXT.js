@@ -1,7 +1,7 @@
 // src/services/userService.ts
 import User from "@/database/models/user.model";
 
-export const getUsersWithPostCount = async () => {
+export const getUsers = async () => {
   try {
     const users = await User.findAll({
       attributes: ["id", "name", "email"],

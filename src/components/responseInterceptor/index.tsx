@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { setupAxiosInterceptors } from "@/utils/axiosInstance";
+// import { setupAxiosInterceptors } from "@/utils/axiosInstance";
 import { logout } from "@/app/actions/auth";
 
 const ClientInterceptorSetup = () => {
-  useEffect(() => {
-    setupAxiosInterceptors(logout);
-  }, []);
+  // useEffect(() => {
+  //   setupAxiosInterceptors(logout);
+  // }, []);
 
   return null;
 };

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/middleware/auth";
 import { deleteCommentService } from "@/services/commentService";
+import { getUserAction } from "@/app/actions/auth";
 
 export async function DELETE(
   req: NextRequest,
@@ -12,21 +13,16 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid comment ID" }, { status: 400 });
   }
 
-  const tokenVerification = await verifyToken(req);
-  if (!tokenVerification.isValid) {
-    return NextResponse.json(
-      { error: tokenVerification.error },
-      { status: 401 }
-    );
+  const sessionUser = await getUserAction();
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-
-  const { user } = tokenVerification;
 
   try {
     const result = await deleteCommentService(
       commentId,
-      user?.id!,
-      user?.isAdmin!
+      sessionUser?.id!,
+      sessionUser?.isAdmin!
     );
 
     if (!result.success) {

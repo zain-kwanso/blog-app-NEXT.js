@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { postValidationSchema } from "@/validation/validationSchema";
 import useEditPost from "@/hooks/useEditPost";
 import useFetchPost from "@/hooks/useFetchPost";
 import { PostFormData } from "../../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
-// import withAuth from "@/components/withAuth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updatePost } from "@/services/postService";
+import { updatePostAction } from "@/app/actions/posts";
 
 const EditPostPage = ({ params }: { params: { id: string } }) => {
   const { editPost } = useEditPost();
-  const [isFirstSubmit, setIsFirstSubmit] = useState(true);
   const { fetchPost, post } = useFetchPost();
   const { navigateToPreviewPostPage } = useCustomNavigation();
   const postId = parseInt(params.id, 10);
@@ -27,10 +27,10 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     clearErrors,
   } = useForm({
-    resolver: yupResolver(postValidationSchema),
+    resolver: zodResolver(postValidationSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: defaultPostValues,
@@ -50,16 +50,17 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
   }, [post]);
 
   const onSubmit = async (data: PostFormData) => {
-    if (isFirstSubmit) {
-      setIsFirstSubmit(false);
-    }
-
     clearErrors();
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("content", data.content);
 
     try {
-      await editPost(postId, data);
-      toast.success("Post updated successfully!");
+      const response = await updatePostAction(postId, formData);
       navigateToPreviewPostPage(postId);
+      if (response.status === 200) {
+        toast.success("Post updated successfully!");
+      }
     } catch (error) {
       toast.error("An error occurred during post update");
     }
@@ -78,12 +79,10 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
               type="text"
               {...register("title")}
               className={`w-full p-4 border rounded-lg ${
-                errors.title && !isFirstSubmit
-                  ? "border-red-500"
-                  : "border-gray-300"
+                errors.title ? "border-red-500" : "border-gray-300"
               }`}
             />
-            {(errors.title || (!isFirstSubmit && errors.title)) && (
+            {errors.title && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.title?.message}
               </p>
@@ -96,13 +95,11 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
             <textarea
               {...register("content")}
               className={`w-full px-3 py-2 border rounded-lg ${
-                errors.content && !isFirstSubmit
-                  ? "border-red-500"
-                  : "border-gray-300"
+                errors.content ? "border-red-500" : "border-gray-300"
               }`}
               rows={10}
             />
-            {(errors.content || (!isFirstSubmit && errors.content)) && (
+            {errors.content && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.content?.message}
               </p>
@@ -112,9 +109,10 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
           <div className="flex gap-4 justify-end font-medium">
             <button
               type="submit"
+              disabled={isSubmitting}
               className="bg-purple-500 text-white py-2 px-4 rounded-lg"
             >
-              Update Post
+              {isSubmitting ? "Updating Post..." : "Upate Post"}
             </button>
           </div>
         </form>

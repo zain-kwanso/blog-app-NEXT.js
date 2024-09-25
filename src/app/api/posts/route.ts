@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/middleware/auth";
 import { getAllPosts, getPostsByUser } from "@/services/postService";
+import { getUserAction } from "@/app/actions/auth";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -10,17 +11,15 @@ export async function GET(req: NextRequest) {
   const userId = searchParams.get("userId");
 
   if (userId) {
-    const tokenVerification = await verifyToken(req);
-    if (!tokenVerification.isValid) {
+    const sessionUser = await getUserAction();
+    if (!sessionUser) {
       return NextResponse.json(
-        { error: tokenVerification.error },
+        { error: "Session doesn't exist" },
         { status: 403 }
       );
     }
 
-    const { user } = tokenVerification;
-
-    if (user.id !== parseInt(userId, 10) && !user.isAdmin) {
+    if (sessionUser?.id !== parseInt(userId, 10)) {
       return NextResponse.json(
         { error: "Unauthorized access" },
         { status: 403 }
@@ -34,10 +33,6 @@ export async function GET(req: NextRequest) {
         nextPage,
         previousPage,
       } = await getPostsByUser(parseInt(userId, 10), page, limit, search);
-
-      // if (posts.length === 0) {
-      //   return NextResponse.json({ error: "No posts found" }, { status: 404 });
-      // }
 
       return NextResponse.json(
         {
@@ -65,10 +60,6 @@ export async function GET(req: NextRequest) {
       nextPage,
       previousPage,
     } = await getAllPosts(page, limit, search);
-
-    // if (posts.length === 0) {
-    //   return NextResponse.json({ error: "No posts found" }, { status: 404 });
-    // }
 
     return NextResponse.json(
       {

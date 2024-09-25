@@ -4,15 +4,14 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { UserLoginAttributes } from "../../../@types/user";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { loginValidationSchema } from "@/validation/validationSchema";
-import { signinAction } from "@/app/actions/auth";
 import { AuthContext } from "@/context/authContext";
 import { useContext } from "react";
 
 const LoginForm: React.FC = (): React.JSX.Element => {
   const { navigateToHomePage } = useCustomNavigation();
-  const { user } = useContext(AuthContext);
+  const { signin } = useContext(AuthContext);
 
   const defaultLoginValues: UserLoginAttributes = {
     email: "default@example.com",
@@ -24,20 +23,22 @@ const LoginForm: React.FC = (): React.JSX.Element => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<UserLoginAttributes>({
-    resolver: yupResolver(loginValidationSchema),
+    resolver: zodResolver(loginValidationSchema),
     defaultValues: defaultLoginValues,
     mode: "onChange",
   });
 
   const onSubmit: SubmitHandler<UserLoginAttributes> = async (data) => {
     try {
-      const { token } = await signinAction(data.email, data.password);
+      const status = await signin(data.email, data.password);
 
-      if (token) {
+      if (status === 200) {
         toast.success("Login Successful.");
         navigateToHomePage();
-      } else {
+      } else if (status === 401) {
         toast.warning("Please verify your email first.");
+      } else {
+        toast.error("Invalid Credentials!");
       }
     } catch (error) {
       toast.error("Invalid Credentials!");

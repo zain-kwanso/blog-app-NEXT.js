@@ -1,40 +1,40 @@
-import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-// import { tokenExpired } from "utils/token";
+import { getUserAction } from "./app/actions/auth";
 
-export async function middleware(request: NextRequest) {
-  const refresh_token = cookies().get("session");
+const publicNoSessionRoutes = ["/login", "/signup", "/verify-email"];
+const privateSessionRoutes = ["/posts/create", "/admin"];
+const publicRoutes = ["/", "/about"];
 
-  const is_authenticated = !!refresh_token;
+export default async function middleware(req: NextRequest) {
+  const path = req.nextUrl.pathname;
 
-  if (!is_authenticated) {
-    let redirect_path = new URL("/login", request.url);
-    return NextResponse.redirect(redirect_path);
+  const session = cookies().get("session")?.value;
+  // const admin = await getUserAction();
+
+  const isPublicNoSessionRoute = publicNoSessionRoutes.includes(path);
+
+  const isPrivateSessionRoute =
+    privateSessionRoutes.includes(path) ||
+    (path.startsWith("/posts") && path.endsWith("/edit"));
+
+  const isPublicRoute = publicRoutes.includes(path);
+
+  if (isPublicNoSessionRoute && !!session) {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
-  // Return: Next Response
+  if (isPrivateSessionRoute && !session) {
+    return NextResponse.redirect(new URL("/login", req.nextUrl));
+  }
+
+  if (isPublicRoute) {
+    return NextResponse.next();
+  }
+
   return NextResponse.next();
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: [
-    "/posts/create",
-    "/posts/[id]/edit",
-    "/admin",
-    // "/customers/:path*",
-    // "/email-verify",
-    // "/finance/:path*",
-    // "/fleet/:path*",
-    // "/settings/:path*",
-    // "/shipments/:path*",
-    // "/signup/complete-onboarding",
-    // "/signup/splash",
-    // "/signup/subscriptions",
-    // "/subscriptions/:path*",
-    // "/suppliers/:path*",
-    // "/email-verify",
-    // "/",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };

@@ -1,4 +1,4 @@
-import { validateRequest } from "@/middleware/validateRequest";
+import { validateRequest } from "@/validation/validateData";
 import { signupService } from "@/services/authService";
 import { sendVerificationEmail } from "@/services/emailService";
 import { signupValidationSchema } from "@/validation/validationSchema";

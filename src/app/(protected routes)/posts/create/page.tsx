@@ -1,17 +1,15 @@
-"use client"; // This ensures that this component works on the client side
+"use client";
 
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { postValidationSchema } from "@/validation/validationSchema";
-import useCreatePost from "@/hooks/useCreatePost";
 import { PostFormData } from "../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createPostAction } from "@/app/actions/posts";
 
 const CreatePostPage: React.FC = () => {
-  const { createPost } = useCreatePost();
-
   const { navigateToPreviewPostPage } = useCustomNavigation();
 
   const defaultPostValues: PostFormData = {
@@ -25,7 +23,7 @@ const CreatePostPage: React.FC = () => {
     formState: { errors, isSubmitting },
     clearErrors,
   } = useForm<PostFormData>({
-    resolver: yupResolver(postValidationSchema),
+    resolver: zodResolver(postValidationSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: defaultPostValues,
@@ -33,11 +31,14 @@ const CreatePostPage: React.FC = () => {
 
   const onSubmit: SubmitHandler<PostFormData> = async (data) => {
     clearErrors();
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("content", data.content);
 
     try {
-      const post = await createPost(data);
+      const post = await createPostAction(formData);
       toast.success("Post created successfully!");
-      navigateToPreviewPostPage(post?.id);
+      navigateToPreviewPostPage(post?.data?.id);
     } catch (error) {
       toast.error("An error occurred during post creation");
     }

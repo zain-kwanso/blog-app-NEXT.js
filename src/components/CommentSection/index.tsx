@@ -4,11 +4,11 @@ import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import { ReplyComment, CommentType } from "../../../@types/comment";
 import useFetchComments from "@/hooks/useFetchComments";
-import { useCreateComment } from "@/hooks/useCreateComment";
 import CommentSkeleton from "../CommentSkeleton";
 import useDeleteComment from "@/hooks/useDeleteComment";
 import { AuthContext } from "@/context/authContext";
 import { toast } from "react-toastify";
+import { createCommentAction } from "@/app/actions/comment";
 
 interface CommentsSectionProps {
   postId: number;
@@ -21,7 +21,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   const [replyError, setReplyError] = useState<ReplyComment>({});
 
   const { fetchComments, comments, loading, error } = useFetchComments();
-  const { createComment } = useCreateComment();
+
   const { deleteComment } = useDeleteComment();
 
   const { user } = useContext(AuthContext);
@@ -30,12 +30,18 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
     fetchComments(postId);
   }, [postId]);
 
-  const handleAddComment = async (newComment: string) => {
-    if (newComment.trim() === "") return;
+  const handleAddComment = async (content: string) => {
+    if (content.trim() === "") return;
     try {
-      await createComment(newComment, postId);
-      fetchComments(postId);
-      toast.success("comment added successfully.");
+      const response = await createCommentAction(content, postId);
+
+      if (response.status === 200) {
+        fetchComments(postId);
+        toast.success("comment added successfully.");
+      } else {
+        console.error(response?.error);
+        toast.error("Failed to add comments.");
+      }
     } catch (error) {
       console.error("Error adding comment:", error);
       toast.error("Failed to add comment.");
@@ -59,9 +65,18 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   ) => {
     if (replyComment[parentId]?.trim() === "") return;
     try {
-      await createComment(replyComment[parentId]!, postId, parentId);
-      toast.success("Reply added successfully.");
-      fetchComments(postId);
+      const response = await createCommentAction(
+        replyComment[parentId]!,
+        postId,
+        parentId
+      );
+      if (response.status === 200) {
+        fetchComments(postId);
+        toast.success("comment added successfully.");
+      } else {
+        console.error(response?.error);
+        toast.error("Failed to add comments.");
+      }
     } catch (error) {
       console.error("Error adding reply:", error);
       toast.error("ailed to add reply.");

@@ -1,21 +1,17 @@
+import { getUserAction } from "@/app/actions/auth";
 import { verifyToken } from "@/middleware/auth";
-import { validateRequest } from "@/middleware/validateRequest";
+import { validateRequest } from "@/validation/validateData";
 import { createPost } from "@/services/postService";
-import { postCreationSchema } from "@/utils/validators";
+import { postValidationSchema } from "@/validation/validationSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const tokenVerification = await verifyToken(req);
-  if (!tokenVerification.isValid) {
-    return NextResponse.json(
-      { error: tokenVerification.error },
-      { status: 403 }
-    );
+  const sessionUser = await getUserAction();
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { user } = tokenVerification;
-
-  const validationResponse = await validateRequest(req, postCreationSchema);
+  const validationResponse = await validateRequest(req, postValidationSchema);
   if (!validationResponse.isValid) {
     return NextResponse.json(
       { errors: validationResponse.errors },
@@ -26,7 +22,7 @@ export async function POST(req: NextRequest) {
   const { title, content } = validationResponse.body;
 
   try {
-    const newPost = await createPost(title, content, user?.id!);
+    const newPost = await createPost(title, content, sessionUser?.id!);
 
     return NextResponse.json(newPost, { status: 200 });
   } catch (error) {

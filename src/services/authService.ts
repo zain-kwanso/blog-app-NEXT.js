@@ -33,7 +33,7 @@ export const signupService = async (
 export const signinService = async (
   email: string,
   password: string
-): Promise<{ token: string | null; isVerified: boolean; user: UserType }> => {
+): Promise<{ isVerified: boolean; user: UserType }> => {
   const user = await User.scope("withPassword").findOne({
     where: { email },
   });
@@ -47,8 +47,7 @@ export const signinService = async (
     throw new Error("Invalid credentials");
   }
 
-  const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: "24h" });
-  return { token, isVerified: user.isVerified, user };
+  return { isVerified: user.isVerified, user };
 };
 
 // get profile service

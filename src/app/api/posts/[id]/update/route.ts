@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/middleware/auth";
-import { validateRequest } from "@/middleware/validateRequest";
-import { postCreationSchema } from "@/utils/validators";
+import { validateRequest } from "@/validation/validateData";
+import { postValidationSchema } from "@/validation/validationSchema";
 import { updatePost } from "@/services/postService";
+import { getUserAction } from "@/app/actions/auth";
 
 export async function PUT(
   req: NextRequest,
@@ -15,17 +15,12 @@ export async function PUT(
       { status: 400 }
     );
   }
-  const tokenVerification = await verifyToken(req);
-  if (!tokenVerification.isValid) {
-    return NextResponse.json(
-      { error: tokenVerification.error },
-      { status: 403 }
-    );
+  const sessionUser = await getUserAction();
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { user } = tokenVerification;
-
-  const validationResponse = await validateRequest(req, postCreationSchema);
+  const validationResponse = await validateRequest(req, postValidationSchema);
   if (!validationResponse.isValid) {
     return NextResponse.json(
       { errors: validationResponse.errors },
@@ -36,7 +31,12 @@ export async function PUT(
   const { title, content } = validationResponse.body;
 
   try {
-    const updatedPost = await updatePost(postId, title, content, user?.id!);
+    const updatedPost = await updatePost(
+      postId,
+      title,
+      content,
+      sessionUser?.id!
+    );
 
     return NextResponse.json(updatedPost, { status: 200 });
   } catch (error: unknown) {

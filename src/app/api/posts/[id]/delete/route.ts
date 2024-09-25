@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/middleware/auth";
 import { deletePost } from "@/services/postService";
+import { getUserAction } from "@/app/actions/auth";
 
 export async function DELETE(
   req: NextRequest,
@@ -13,18 +13,17 @@ export async function DELETE(
       { status: 400 }
     );
   }
-  const tokenVerification = await verifyToken(req);
-  if (!tokenVerification.isValid) {
-    return NextResponse.json(
-      { error: tokenVerification.error },
-      { status: 403 }
-    );
+  const sessionUser = await getUserAction();
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { user } = tokenVerification;
-
   try {
-    const result = await deletePost(postId, user?.id!, user?.isAdmin!);
+    const result = await deletePost(
+      postId,
+      sessionUser?.id!,
+      sessionUser?.isAdmin!
+    );
 
     return NextResponse.json(result, { status: 200 });
   } catch (error: unknown) {

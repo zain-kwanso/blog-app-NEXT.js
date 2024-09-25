@@ -8,7 +8,8 @@ import { AuthContextType } from "../../@types/context";
 import { url } from "@/utils/URL";
 import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
-import { getUserAction } from "@/app/actions/auth";
+import { getUserAction, logout } from "@/app/actions/auth";
+import { signinAction } from "@/app/actions/auth";
 
 const initialAuthContext: AuthContextType = {
   user: null,
@@ -18,7 +19,7 @@ const initialAuthContext: AuthContextType = {
     return true;
   },
   signin: async (email, password) => {
-    return true;
+    return 200;
   },
   verifyOtp: async (email, otp) => {
     return true;
@@ -41,6 +42,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const response = await getUserAction();
+      console.log(response);
 
       setUser(response);
     } catch (error) {
@@ -108,40 +110,29 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
   // Sign in function
-  const signin = async (email: string, password: string): Promise<boolean> => {
+  const signin = async (email: string, password: string): Promise<number> => {
     try {
-      const response = await axiosInstance.post(url.signin, {
-        email,
-        password,
-      });
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      const response = await signinAction(formData);
 
-      if (response.data.token) {
-        setEmail(email);
-        setToken(response.data.token);
+      if (response.status) {
         await fetchUser();
-        return true;
+        return response.status;
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401) {
-          return false;
-        }
-      }
-
       console.error("Sign-in error:", error);
       throw error;
     }
-
-    return false;
+    return 200;
   };
 
   // Sign out function
   const signout = async () => {
-    await axios.post("/api/auth/logout");
+    await logout();
 
     setUser(null);
-    removeToken();
-    router.push("/login");
   };
 
   return (

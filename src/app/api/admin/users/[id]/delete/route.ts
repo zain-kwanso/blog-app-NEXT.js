@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/middleware/auth";
+
 import { deleteUserById } from "@/services/userService";
+
+import { getUserAction } from "@/app/actions/auth";
 
 export async function DELETE(
   req: NextRequest,
@@ -12,24 +14,20 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
   }
 
-  const tokenVerification = await verifyToken(req);
-  if (!tokenVerification.isValid) {
-    return NextResponse.json(
-      { error: tokenVerification.error },
-      { status: 401 }
-    );
+  const sessionUser = await getUserAction();
+
+  if (!sessionUser) {
+    return NextResponse.json({ error: "Invalid Session" }, { status: 401 });
   }
 
-  const { user } = tokenVerification;
-
-  if (!user?.isAdmin) {
+  if (!sessionUser.isAdmin) {
     return NextResponse.json(
       { error: "Admin privileges required" },
       { status: 403 }
     );
   }
 
-  if (user.id === userId) {
+  if (sessionUser.id === userId) {
     return NextResponse.json(
       { error: "You cannot delete your own account" },
       { status: 400 }

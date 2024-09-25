@@ -4,44 +4,63 @@ import { createSession, deleteSession } from "@/app/lib/session";
 import { signinService } from "@/services/authService";
 import { signupService } from "@/services/authService";
 import { sendVerificationEmail } from "@/services/emailService";
-import { validateRequest } from "@/middleware/validateRequest";
-import { signupValidationSchema } from "@/validation/validationSchema";
+import {
+  loginValidationSchema,
+  signupValidationSchema,
+} from "@/validation/validationSchema";
 import { generatePresignedUrl } from "@/services/s3Service";
 import User from "@/database/models/user.model";
 import { verifySession } from "../lib/dal";
+import { UserResponse } from "../../../@types/user";
+import { validateFormData } from "@/validation/validateData";
 
-export async function logout() {
+export const logout = async () => {
   await deleteSession();
-}
+};
 
-export async function signinAction(email: string, password: string) {
+export const signinAction = async (formData: FormData) => {
   try {
+    const validationResponse = await validateFormData(
+      loginValidationSchema,
+      formData
+    );
+
+    if (!validationResponse.isValid) {
+      return { errors: validationResponse.errors, status: 400 };
+    }
+
+    const { email, password } = validationResponse.body;
+
     const { isVerified, user } = await signinService(email, password);
 
     if (!isVerified) {
-      return { error: "Please verify your email first" };
+      return { error: "Please verify your email first", status: 401 };
     }
 
-    const token = createSession(user.id);
+    await createSession(user.id);
 
-    return { token, success: true, id: user.id };
+    return { success: "Signin Successfull", status: 200 };
   } catch (error) {
     console.error("Signin error:", error);
-    return { error: "Something went wrong, please try again later." };
+    return {
+      error: "Something went wrong, please try again later.",
+      status: 500,
+    };
   }
-}
+};
 
-export async function signupAction(formData: FormData) {
+export const signupAction = async (formData: FormData) => {
   try {
-    const email = formData.get("email") as string;
-    const name = formData.get("name") as string;
-    const password = formData.get("password") as string;
+    const validationResponse = await validateFormData(
+      signupValidationSchema,
+      formData
+    );
 
-    // // Validate request
-    // const { isValid, errors } = await validateRequest({ email, name, password }, signupValidationSchema);
-    // if (!isValid) {
-    //   return { errors, status: 400 };
-    // }
+    if (!validationResponse.isValid) {
+      return { errors: validationResponse.errors, status: 400 };
+    }
+
+    const { email, name, password } = validationResponse.body;
 
     const verificationToken = await signupService({ email, name, password });
     const verificationUrl = `${process.env.NEXT_PUBLIC_URL}/verify-email?token=${verificationToken}`;
@@ -62,9 +81,9 @@ export async function signupAction(formData: FormData) {
       };
     }
   }
-}
+};
 
-export const getUserAction = async () => {
+export const getUserAction = async (): Promise<UserResponse | null> => {
   const session = await verifySession();
   if (!session) return null;
 

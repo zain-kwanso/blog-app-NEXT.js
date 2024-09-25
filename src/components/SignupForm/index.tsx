@@ -2,11 +2,11 @@
 
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { signupValidationSchema } from "@/validation/validationSchema";
 import { UserCreationAttributes } from "../../../@types/user";
 import { signupAction } from "@/app/actions/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignupForm: React.FC = (): React.JSX.Element => {
   const defaultSignupValues: UserCreationAttributes = {
@@ -20,7 +20,7 @@ const SignupForm: React.FC = (): React.JSX.Element => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<UserCreationAttributes>({
-    resolver: yupResolver(signupValidationSchema),
+    resolver: zodResolver(signupValidationSchema),
     defaultValues: defaultSignupValues,
     mode: "onChange",
   });
