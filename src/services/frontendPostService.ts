@@ -1,7 +1,5 @@
 import { fetchPostAction } from "@/app/actions/posts";
 import { PostResponse } from "../../@types/post";
-import { url, backend_url } from "@/utils/URL";
-import axios from "axios";
 
 const fetchPost = async (postId: number): Promise<PostResponse | null> => {
   try {

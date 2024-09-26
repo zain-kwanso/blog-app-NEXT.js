@@ -10,7 +10,6 @@ export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
   const session = cookies().get("session")?.value;
-  // const admin = await getUserAction();
 
   const isPublicNoSessionRoute = publicNoSessionRoutes.includes(path);
 

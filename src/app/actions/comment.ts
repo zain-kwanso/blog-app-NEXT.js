@@ -12,6 +12,7 @@ export const createCommentAction = async (
   postId: number,
   parentId?: number
 ) => {
+  //current user
   const sessionUser = await getUserAction();
   if (!sessionUser) {
     return { error: "Forbidden", status: 401 };

@@ -17,6 +17,7 @@ import { validateFormData } from "@/validation/validateData";
 // logout server action
 export const logout = async () => {
   await deleteSession();
+  //redirect
 };
 
 // signin server action
@@ -41,7 +42,7 @@ export const signinAction = async (formData: FormData) => {
 
     await createSession(user.id);
 
-    return { success: "Signin Successfull", status: 200 };
+    return { success: "Signin Successfull", status: 200 }; //redirect
   } catch (error) {
     console.error("Signin error:", error);
     return {
