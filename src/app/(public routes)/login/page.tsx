@@ -1,6 +1,7 @@
 import React from "react";
 import LoginForm from "@/components/LoginForm";
 import Link from "next/link";
+import { routeUrl } from "@/utils/pageRoutes";
 
 const LoginPage: React.FC = (): React.JSX.Element => {
   return (
@@ -10,7 +11,10 @@ const LoginPage: React.FC = (): React.JSX.Element => {
         <LoginForm />
         <p className="mt-4 text-center">
           Don't have an account?{" "}
-          <Link href="/signup" className="text-blue-500 hover:underline">
+          <Link
+            href={routeUrl.signup}
+            className="text-blue-500 hover:underline"
+          >
             Sign Up
           </Link>
         </p>

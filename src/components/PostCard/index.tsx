@@ -52,6 +52,7 @@ const PostCard: React.FC<PostCardProps> = ({
       <div className="mt-4 flex justify-end space-x-2">
         {isUserPost && (
           <button
+            disabled={deleteLoading}
             onClick={(e) => {
               e.stopPropagation();
               onEdit(post);

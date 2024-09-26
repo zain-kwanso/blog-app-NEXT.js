@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { postValidationSchema } from "@/validation/validationSchema";
-import useEditPost from "@/hooks/useEditPost";
 import useFetchPost from "@/hooks/useFetchPost";
 import { PostFormData } from "../../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updatePost } from "@/services/postService";
 import { updatePostAction } from "@/app/actions/posts";
 
 const EditPostPage = ({ params }: { params: { id: string } }) => {
-  const { editPost } = useEditPost();
   const { fetchPost, post } = useFetchPost();
   const { navigateToPreviewPostPage } = useCustomNavigation();
   const postId = parseInt(params.id, 10);

@@ -27,7 +27,7 @@ const Profile: React.FC<UserDetailsProps> = ({
   );
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true); // State for image loading
+  const [imageLoading, setImageLoading] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +118,7 @@ const Profile: React.FC<UserDetailsProps> = ({
               />
               <button
                 className="absolute bottom-0 right-0 bg-white rounded-full p-1"
+                disabled={loading}
                 onClick={triggerFileSelect}
                 style={{
                   color: "black",
@@ -156,6 +157,7 @@ const Profile: React.FC<UserDetailsProps> = ({
               />
               <button
                 className="absolute bottom-0 right-0 bg-white rounded-full p-1"
+                disabled={loading}
                 onClick={triggerFileSelect}
                 style={{
                   color: "black",
@@ -207,12 +209,14 @@ const Profile: React.FC<UserDetailsProps> = ({
         {/* Sign Out and Close Buttons */}
         <div className="mt-6 flex justify-end gap-3">
           <button
+            disabled={loading}
             className="bg-red-500 text-white text-xs px-4 py-2 rounded"
             onClick={onSignOut}
           >
             Sign Out
           </button>
           <button
+            disabled={loading}
             className="bg-gray-300 text-xs px-4 py-2 rounded"
             onClick={onClose}
           >

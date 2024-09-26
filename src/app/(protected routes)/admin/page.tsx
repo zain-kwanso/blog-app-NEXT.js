@@ -1,8 +1,7 @@
-// "use client";
-
 import { getUserAction } from "@/app/actions/auth";
 import { fetchUsersAction } from "@/app/actions/users";
 import DeleteButton from "@/components/DeleteButton";
+import { UserType } from "../../../../@types/user";
 
 export default async function AdminPanel() {
   const result = await fetchUsersAction();
@@ -19,7 +18,7 @@ export default async function AdminPanel() {
     );
   }
 
-  const users = result.data;
+  const users: Partial<UserType[]> = result.data;
 
   return (
     <div className="container mx-auto p-6 mt-24 mb-16">
@@ -45,24 +44,21 @@ export default async function AdminPanel() {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {
-              // @ts-ignore
-              users.map((user) => (
-                <tr
-                  key={user.id}
-                  className="border-b hover:bg-gray-100 transition duration-150 ease-in-out"
-                >
-                  <td className="py-4 px-6">{user.id}</td>
-                  <td className="py-4 px-6">{user.name}</td>
-                  <td className="py-4 px-6">{user.email}</td>
-                  {!(admin?.id === user.id) && (
-                    <td className="py-4 px-6">
-                      <DeleteButton userId={user.id} />
-                    </td>
-                  )}
-                </tr>
-              ))
-            }
+            {users.map((user) => (
+              <tr
+                key={user?.id}
+                className="border-b hover:bg-gray-100 transition duration-150 ease-in-out"
+              >
+                <td className="py-4 px-6">{user?.id}</td>
+                <td className="py-4 px-6">{user?.name}</td>
+                <td className="py-4 px-6">{user?.email}</td>
+                {!(admin?.id === user?.id) && (
+                  <td className="py-4 px-6">
+                    <DeleteButton userId={user?.id!} />
+                  </td>
+                )}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

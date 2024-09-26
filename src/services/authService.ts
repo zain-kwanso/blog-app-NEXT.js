@@ -47,7 +47,7 @@ export const signinService = async (
     throw new Error("Invalid credentials");
   }
 
-  return { isVerified: user.isVerified, user };
+  return { isVerified: !!user.verificationTime, user };
 };
 
 // get profile service

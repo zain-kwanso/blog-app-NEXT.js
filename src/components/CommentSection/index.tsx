@@ -5,7 +5,6 @@ import Image from "next/image";
 import { ReplyComment, CommentType } from "../../../@types/comment";
 import useFetchComments from "@/hooks/useFetchComments";
 import CommentSkeleton from "../CommentSkeleton";
-import useDeleteComment from "@/hooks/useDeleteComment";
 import { AuthContext } from "@/context/authContext";
 import { toast } from "react-toastify";
 import {
@@ -24,8 +23,6 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   const [replyError, setReplyError] = useState<ReplyComment>({});
 
   const { fetchComments, comments, loading, error } = useFetchComments();
-
-  const { deleteComment } = useDeleteComment();
 
   const { user } = useContext(AuthContext);
 

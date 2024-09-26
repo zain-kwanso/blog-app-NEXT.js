@@ -2,6 +2,7 @@ import React from "react";
 
 import Link from "next/link";
 import SignupForm from "@/components/SignupForm";
+import { routeUrl } from "@/utils/pageRoutes";
 
 const SignupPage: React.FC = (): React.JSX.Element => {
   return (
@@ -11,7 +12,7 @@ const SignupPage: React.FC = (): React.JSX.Element => {
         <SignupForm />
         <p className="mt-4 text-center">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-500 hover:underline">
+          <Link href={routeUrl.login} className="text-blue-500 hover:underline">
             Login
           </Link>
         </p>

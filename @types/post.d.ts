@@ -27,8 +27,8 @@ export interface PostResponse extends Post {
 export interface Pagination {
   currentPage: number;
   totalPages: number;
-  nextPageUrl: string | null;
-  previousPageUrl: string | null;
+  nextPageUrl: number | null;
+  previousPageUrl: number | null;
 }
 
 export interface AllPostResponse {

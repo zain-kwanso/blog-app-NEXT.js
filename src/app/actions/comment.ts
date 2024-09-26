@@ -6,6 +6,7 @@ import {
 } from "@/services/commentService";
 import { getUserAction } from "@/app/actions/auth";
 
+// create comment server action
 export const createCommentAction = async (
   content: string,
   postId: number,
@@ -39,6 +40,7 @@ export const createCommentAction = async (
   }
 };
 
+// delete comment server actions
 export const deleteCommentAction = async (commentId: number) => {
   if (isNaN(commentId) || commentId <= 0) {
     return { error: "Invalid comment ID", status: 400 };

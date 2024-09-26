@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DeleteEditResponse } from "../../@types/post";
 import axiosInstance from "@/utils/axiosInstance";
 import { url } from "@/utils/URL";
+import { deletePostAction } from "@/app/actions/posts";
 
 const useDeletePost = () => {
   const [loading, setLoading] = useState(false);
@@ -14,9 +15,10 @@ const useDeletePost = () => {
       setLoading(true);
       setError("");
 
-      const response = await axiosInstance.delete<DeleteEditResponse>(
-        `${url.posts}/${postId}/delete`
-      );
+      const response = await deletePostAction(postId);
+      if (response.error) {
+        throw new Error(response.error);
+      }
     } catch (err) {
       console.error("Error deleting post:", err);
       setError("Error deleting post.");

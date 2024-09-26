@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axiosInstance from "@/utils/axiosInstance";
-import { url } from "@/utils/URL";
+import { deleteUserAction } from "@/app/actions/users";
 
 const useDeleteUser = () => {
   const [loading, setLoading] = useState(false);
@@ -11,7 +10,7 @@ const useDeleteUser = () => {
       setLoading(true);
       setError("");
 
-      await axiosInstance.delete(`${url.users}/${userId}/delete`);
+      await deleteUserAction(userId);
     } catch (err) {
       console.error("Error deleting user:", err);
       setError("Error deleting user.");

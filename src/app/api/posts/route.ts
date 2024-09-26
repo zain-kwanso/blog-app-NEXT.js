@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@/middleware/auth";
 import { getAllPosts, getPostsByUser } from "@/services/postService";
 import { getUserAction } from "@/app/actions/auth";
 

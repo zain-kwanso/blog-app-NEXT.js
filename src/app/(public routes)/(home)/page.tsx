@@ -93,6 +93,47 @@ const HomePage = () => {
     }
   };
 
+  // const handleDeletePost = async (postId: number) => {
+  //   if (!user) return;
+
+  //   // Show a toast asking for confirmation
+  //   toast.info(
+  //     <div>
+  //       <p>Are you sure you want to delete this post?</p>
+  //       <div>
+  //         <button
+  //           onClick={async () => {
+  //             await deletePost(postId);
+  //             if (error) {
+  //               toast.error(error);
+  //             } else {
+  //               toast.success("Post deleted successfully!");
+  //               fetchAllPosts({
+  //                 page: currentPage,
+  //                 limit: itemsPerPage,
+  //                 search: search,
+  //               });
+  //             }
+  //           }}
+  //           className="mr-2 bg-red-600 text-white py-1 px-2 rounded"
+  //         >
+  //           Confirm
+  //         </button>
+  //         <button
+  //           onClick={() => toast.dismiss()}
+  //           className="bg-gray-400 text-white py-1 px-2 rounded"
+  //         >
+  //           Cancel
+  //         </button>
+  //       </div>
+  //     </div>,
+  //     {
+  //       autoClose: false,
+  //       closeOnClick: true,
+  //     }
+  //   );
+  // };
+
   const handleCreatePost = () => {
     navigateToCreatePostPage();
   };
@@ -142,7 +183,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="">
+    <>
       <div className="sticky top-16 bg-white shadow-md z-10 px-4 w-full py-4">
         <div className="w-full flex justify-between items-center max-w-7xl mx-auto">
           <div className="w-1/2 pr-4">
@@ -173,7 +214,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div className="pt-20 flex flex-col min-h-screen justify-between">
+      <div className="container mx-auto pt-20 flex flex-col min-h-screen justify-between">
         <div className="w-full max-w-4xl px-4">
           <div className="border-b border-gray-300">
             <div className="flex justify-start">
@@ -247,7 +288,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

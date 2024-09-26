@@ -3,21 +3,18 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
-import axios from "axios";
-import { backend_url, url } from "@/utils/URL";
+import { url } from "@/utils/URL";
 import axiosInstance from "@/utils/axiosInstance";
-// import { verifyEmailRequest } from "@/services/emailService";
+import { verifyEmailAction } from "@/app/actions/auth";
 
 export const verifyEmailRequest = async (token: string) => {
   try {
-    const res = await axiosInstance.get(url.verify_email, {
-      params: { token },
-    });
+    const res = await verifyEmailAction(token);
 
     if (res.status === 200) {
-      return res.data.message;
+      return res?.message || "Email verified successfully";
     } else {
-      throw new Error(res.data.error || "Verification failed");
+      throw new Error(res.error || "Verification failed");
     }
   } catch (error) {
     console.error("Error verifying email:", error);
@@ -48,9 +45,6 @@ const VerifyEmail = () => {
       setMessage(message);
       toast.success(message);
       setLoading(false);
-      setTimeout(() => {
-        navigateToLoginPage();
-      }, 3000);
     } catch (error) {
       if (error instanceof Error) {
         setMessage(error.message || "Failed to verify email.");

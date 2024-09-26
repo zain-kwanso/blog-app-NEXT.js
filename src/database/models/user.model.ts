@@ -35,13 +35,9 @@ const User: UserInstanceType = sequelize.define<UserInstanceType>(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    otpExpiration: {
+    verificationTime: {
       type: DataTypes.DATE,
-      allowNull: true,
-    },
-    isVerified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: null,
     },
 
     profileKey: {

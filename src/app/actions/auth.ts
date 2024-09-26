@@ -14,10 +14,12 @@ import { verifySession } from "../lib/dal";
 import { UserResponse } from "../../../@types/user";
 import { validateFormData } from "@/validation/validateData";
 
+// logout server action
 export const logout = async () => {
   await deleteSession();
 };
 
+// signin server action
 export const signinAction = async (formData: FormData) => {
   try {
     const validationResponse = await validateFormData(
@@ -49,6 +51,7 @@ export const signinAction = async (formData: FormData) => {
   }
 };
 
+// signup server action
 export const signupAction = async (formData: FormData) => {
   try {
     const validationResponse = await validateFormData(
@@ -83,6 +86,7 @@ export const signupAction = async (formData: FormData) => {
   }
 };
 
+// get user profile server action
 export const getUserAction = async (): Promise<UserResponse | null> => {
   const session = await verifySession();
   if (!session) return null;
@@ -112,3 +116,32 @@ export const getUserAction = async (): Promise<UserResponse | null> => {
     return null;
   }
 };
+
+// verify email server action
+export async function verifyEmailAction(token: string) {
+  if (!token) {
+    return { error: "Invalid or missing token", status: 400 };
+  }
+
+  try {
+    const user = await User.findOne({
+      where: {
+        verificationToken: token,
+      },
+    });
+
+    if (!user) {
+      return { error: "Invalid or expired token", status: 404 };
+    }
+
+    await user.update({
+      verificationTime: new Date(),
+      verificationToken: null,
+    });
+
+    return { message: "Email verified successfully", status: 200 };
+  } catch (error) {
+    console.error("Verification error:", error);
+    return { error: "Internal server error", status: 500 };
+  }
+}

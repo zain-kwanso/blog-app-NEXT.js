@@ -1,12 +1,11 @@
+import { fetchPostAction } from "@/app/actions/posts";
 import { PostResponse } from "../../@types/post";
 import { url, backend_url } from "@/utils/URL";
 import axios from "axios";
 
 const fetchPost = async (postId: number): Promise<PostResponse | null> => {
   try {
-    const response = await axios.get<PostResponse>(
-      backend_url + `${url.posts}/${postId}`
-    );
+    const response = await fetchPostAction(postId);
 
     return response.data;
   } catch (err) {
