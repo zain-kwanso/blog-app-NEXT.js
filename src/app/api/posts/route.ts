@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllPosts, getPostsByUser } from "@/services/postService";
-import { getUserAction } from "@/app/actions/auth";
+import { getCurrentUser } from "@/app/actions/auth";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -10,15 +10,15 @@ export async function GET(req: NextRequest) {
   const userId = searchParams.get("userId");
 
   if (userId) {
-    const sessionUser = await getUserAction();
-    if (!sessionUser) {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
       return NextResponse.json(
         { error: "Session doesn't exist" },
         { status: 403 }
       );
     }
 
-    if (sessionUser?.id !== parseInt(userId, 10)) {
+    if (currentUser?.id !== parseInt(userId, 10)) {
       return NextResponse.json(
         { error: "Unauthorized access" },
         { status: 403 }

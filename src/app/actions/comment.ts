@@ -4,7 +4,7 @@ import {
   createCommentService,
   deleteCommentService,
 } from "@/services/commentService";
-import { getUserAction } from "@/app/actions/auth";
+import { getCurrentUser } from "@/app/actions/auth";
 
 // create comment server action
 export const createCommentAction = async (
@@ -13,14 +13,14 @@ export const createCommentAction = async (
   parentId?: number
 ) => {
   //current user
-  const sessionUser = await getUserAction();
-  if (!sessionUser) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
     return { error: "Forbidden", status: 401 };
   }
 
   try {
     const comment = await createCommentService(
-      sessionUser.id,
+      currentUser.id,
       postId,
       content,
       parentId
@@ -47,16 +47,16 @@ export const deleteCommentAction = async (commentId: number) => {
     return { error: "Invalid comment ID", status: 400 };
   }
 
-  const sessionUser = await getUserAction();
-  if (!sessionUser) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
     return { error: "Forbidden", status: 403 };
   }
 
   try {
     const result = await deleteCommentService(
       commentId,
-      sessionUser.id,
-      sessionUser.isAdmin
+      currentUser.id,
+      currentUser.isAdmin
     );
 
     if (!result.success) {

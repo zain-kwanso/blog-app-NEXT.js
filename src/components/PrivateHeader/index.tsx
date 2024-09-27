@@ -100,10 +100,9 @@ const PrivateHeader: React.FC = (): React.JSX.Element => {
         <Profile
           user={user}
           onSignOut={() => {
-            signout();
             handleCloseModal();
-            navigateToLoginPage();
             toast.success("Signout Successful");
+            signout();
           }}
           onClose={handleCloseModal}
           updateProfilePicture={updateProfilePicture}

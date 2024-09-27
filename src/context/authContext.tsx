@@ -5,7 +5,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { UserResponse } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
 
-import { getUserAction, logout } from "@/app/actions/auth";
+import { getCurrentUser, logout } from "@/app/actions/auth";
 import { signinAction } from "@/app/actions/auth";
 
 const initialAuthContext: AuthContextType = {
@@ -32,7 +32,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
 
     try {
-      const response = await getUserAction();
+      const response = await getCurrentUser();
       console.log(response);
 
       setUser(response);
@@ -77,8 +77,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Sign out function
   const signout = async () => {
-    await logout();
     setUser(null);
+    await logout();
   };
 
   return (

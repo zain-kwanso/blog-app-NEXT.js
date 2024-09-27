@@ -2,7 +2,6 @@ import { Post, PostResponse } from "../../@types/post";
 import { url } from "@/utils/URL";
 import { useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
-import { fetchPostAction } from "@/app/actions/posts";
 
 interface UseFetchPost {
   fetchPost: (postId: number) => Promise<void>;
@@ -20,8 +19,9 @@ const useFetchPost = (): UseFetchPost => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetchPostAction(postId);
-
+      const response = await axiosInstance.get<PostResponse>(
+        `${url.posts}/${postId}`
+      );
       setPost(response.data);
     } catch (err) {
       setError("Failed to load post");

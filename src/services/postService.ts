@@ -13,7 +13,7 @@ export const createPost = async (
       content,
       UserId: userId,
     });
-    return newPost;
+    return newPost.toJSON();
   } catch (error) {
     console.log(error);
   }

@@ -1,21 +1,22 @@
 "use server";
 
 import User from "@/database/models/user.model";
-import { getUserAction } from "./auth";
+import { getCurrentUser } from "./auth";
 import { deleteUserById } from "@/services/userService";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { routeUrl } from "@/utils/pageRoutes";
 
 // get all users server action
 export const fetchUsersAction = async () => {
   try {
-    const sessionUser = await getUserAction();
+    const currentUser = await getCurrentUser();
 
-    if (!sessionUser) {
+    if (!currentUser) {
       return { error: "Invalid session.", status: 401 };
     }
 
-    if (!sessionUser.isAdmin) {
+    if (!currentUser.isAdmin) {
       return { error: "Access denied. Admins only.", status: 403 };
     }
 
@@ -36,8 +37,8 @@ export const fetchUsersAction = async () => {
 
 // delete user server aciton
 export const deleteUserAction = async (userId: number) => {
-  const sessionUser = await getUserAction();
-  if (!sessionUser || !sessionUser.isAdmin) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !currentUser.isAdmin) {
     return { error: "You don't have permission to delete users", status: 403 };
   }
 
@@ -45,9 +46,8 @@ export const deleteUserAction = async (userId: number) => {
     const result = await deleteUserById(userId);
 
     if (result.success) {
-      revalidatePath("/admin");
-      redirect("/admin");
-      return { message: "User deleted successfully", status: 200 };
+      revalidatePath(routeUrl.admin);
+      redirect(routeUrl.admin);
     } else {
       return { error: result.error || "Failed to delete user", status: 500 };
     }

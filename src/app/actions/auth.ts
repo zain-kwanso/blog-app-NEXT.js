@@ -13,11 +13,13 @@ import User from "@/database/models/user.model";
 import { verifySession } from "../lib/dal";
 import { UserResponse } from "../../../@types/user";
 import { validateFormData } from "@/validation/validateData";
+import { routeUrl } from "@/utils/pageRoutes";
+import { redirect } from "next/navigation";
 
 // logout server action
 export const logout = async () => {
   await deleteSession();
-  //redirect
+  redirect(routeUrl.login);
 };
 
 // signin server action
@@ -88,7 +90,7 @@ export const signupAction = async (formData: FormData) => {
 };
 
 // get user profile server action
-export const getUserAction = async (): Promise<UserResponse | null> => {
+export const getCurrentUser = async (): Promise<UserResponse | null> => {
   const session = await verifySession();
   if (!session) return null;
 

@@ -1,11 +1,11 @@
-import { getUserAction } from "@/app/actions/auth";
+import { getCurrentUser } from "@/app/actions/auth";
 import { fetchUsersAction } from "@/app/actions/users";
 import DeleteButton from "@/components/DeleteButton";
 import { UserType } from "../../../../@types/user";
 
 export default async function AdminPanel() {
   const result = await fetchUsersAction();
-  const admin = await getUserAction();
+  const admin = await getCurrentUser();
 
   if (result.error) {
     return (
