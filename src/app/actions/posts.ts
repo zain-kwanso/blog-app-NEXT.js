@@ -4,6 +4,7 @@ import { validateFormData } from "@/validation/validateData";
 import { getCurrentUser } from "./auth";
 import { postValidationSchema } from "@/validation/validationSchema";
 import { createPost, deletePost, updatePost } from "@/services/postService";
+import { redirect } from "next/navigation";
 
 // create post server action
 export const createPostAction = async (formData: FormData) => {
@@ -24,6 +25,8 @@ export const createPostAction = async (formData: FormData) => {
 
   try {
     const newPost = await createPost(title, content, currentUser?.id);
+    // console.log(newPost);
+    // redirect(`/posts/1/preview`);
     return { data: newPost, status: 200 };
   } catch (error) {
     return {

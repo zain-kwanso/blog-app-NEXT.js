@@ -65,5 +65,3 @@ export default async function AdminPanel() {
     </div>
   );
 }
-
-export const revalidate = 10;
