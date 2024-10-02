@@ -1,23 +1,32 @@
-// src/hooks/useDeletePost.ts
 import { useState } from "react";
-
-import { DeleteEditResponse } from "../../@types/post";
-import axiosInstance from "@/utils/axiosInstance";
-import { url } from "@/utils/URL";
-import { deletePostAction } from "@/app/actions/posts";
+import { gql, useMutation } from "@apollo/client";
+import { DELETE_POST_MUTATION } from "@/utils/mutations";
 
 const useDeletePost = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+
+  const [deletePostMutation] = useMutation(DELETE_POST_MUTATION);
 
   const deletePost = async (postId: number): Promise<void> => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await deletePostAction(postId);
-      if (response.error) {
-        throw new Error(response.error);
+      const idAsNumber =
+        typeof postId === "string" ? parseInt(postId, 10) : postId;
+
+      if (isNaN(idAsNumber)) {
+        throw new Error("Invalid post ID");
+      }
+
+      const { data } = await deletePostMutation({
+        variables: { postId: idAsNumber },
+      });
+      const { success, message } = data.deletePost;
+
+      if (!success) {
+        throw new Error(message);
       }
     } catch (err) {
       console.error("Error deleting post:", err);

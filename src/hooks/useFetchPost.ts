@@ -1,7 +1,7 @@
-import { Post } from "../../@types/post"; // Assuming this defines the Post type
+import { Post } from "../../@types/post";
 import { useState } from "react";
-import { gql } from "@apollo/client"; // Apollo Client imports
 import { createApolloClient } from "@/app/lib/apolloClient";
+import { GET_POST_QUERY } from "@/utils/qeuries";
 
 interface UseFetchPost {
   fetchPost: (postId: number) => Promise<void>;
@@ -9,17 +9,6 @@ interface UseFetchPost {
   loading: boolean;
   error: string;
 }
-
-// GraphQL query to fetch a single post
-const GET_POST_QUERY = gql`
-  query GetPost($id: Int!) {
-    post(id: $id) {
-      id
-      title
-      content
-    }
-  }
-`;
 
 const useFetchPost = (): UseFetchPost => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,7 +26,6 @@ const useFetchPost = (): UseFetchPost => {
         variables: { id: postId },
       });
 
-      // Set the post data received from GraphQL
       setPost(data.post);
     } catch (err) {
       setError("Failed to load post");

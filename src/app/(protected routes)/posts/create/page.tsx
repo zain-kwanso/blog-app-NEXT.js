@@ -8,9 +8,11 @@ import { PostFormData } from "../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createPostAction } from "@/app/actions/posts";
+import useCreatePost from "@/hooks/useCreatePost";
 
 const CreatePostPage: React.FC = () => {
   const { navigateToPreviewPostPage } = useCustomNavigation();
+  const { createPost, error } = useCreatePost();
 
   const defaultPostValues: PostFormData = {
     title: "default title",
@@ -31,16 +33,19 @@ const CreatePostPage: React.FC = () => {
 
   const onSubmit: SubmitHandler<PostFormData> = async (data) => {
     clearErrors();
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("content", data.content);
 
     try {
-      const post = await createPostAction(formData);
-      navigateToPreviewPostPage(post?.data?.id!);
+      // Create the post using the mutation
+      const post = await createPost(data.title, data.content);
+
+      navigateToPreviewPostPage(post?.id!);
       toast.success("Post created successfully!");
-    } catch (error) {
+    } catch (err) {
       toast.error("An error occurred during post creation");
+    }
+
+    if (error) {
+      console.error("Error creating post:", error);
     }
   };
 

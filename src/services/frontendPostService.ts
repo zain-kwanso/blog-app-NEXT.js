@@ -1,17 +1,7 @@
 // services/frontendPostService.ts
 import { gql } from "@apollo/client";
 import { createApolloClient } from "@/app/lib/apolloClient";
-
-// GraphQL query for fetching a single post
-const GET_POST_QUERY = gql`
-  query GetPost($id: Int!) {
-    post(id: $id) {
-      id
-      title
-      content
-    }
-  }
-`;
+import { GET_POST_QUERY } from "@/utils/qeuries";
 
 const fetchPost = async (postId: number) => {
   try {

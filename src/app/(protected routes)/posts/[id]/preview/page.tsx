@@ -37,4 +37,4 @@ export default async function PreviewPostPage({
   );
 }
 
-export const revalidate = 60;
+export const revalidate = 5;

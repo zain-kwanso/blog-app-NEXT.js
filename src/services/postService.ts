@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import { PostResponse } from "../../@types/post";
 
 //create post service
-export const createPost = async (
+export const createPostService = async (
   title: string,
   content: string,
   userId: number
@@ -22,7 +22,7 @@ export const createPost = async (
 };
 
 //update post service
-export const updatePost = async (
+export const updatePostService = async (
   postId: number,
   title: string,
   content: string,
@@ -48,7 +48,7 @@ export const updatePost = async (
 
 //delete post service
 
-export const deletePost = async (
+export const deletePostService = async (
   postId: number,
   userId: number,
   isAdmin: boolean

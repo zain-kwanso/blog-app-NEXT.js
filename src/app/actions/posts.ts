@@ -3,7 +3,11 @@
 import { validateFormData } from "@/validation/validateData";
 import { getCurrentUser } from "./auth";
 import { postValidationSchema } from "@/validation/validationSchema";
-import { createPost, deletePost, updatePost } from "@/services/postService";
+import {
+  createPostService,
+  deletePostService,
+  updatePostService,
+} from "@/services/postService";
 import { redirect } from "next/navigation";
 
 // create post server action
@@ -24,9 +28,8 @@ export const createPostAction = async (formData: FormData) => {
   const { title, content } = validationResponse.body;
 
   try {
-    const newPost = await createPost(title, content, currentUser?.id);
-    // console.log(newPost);
-    // redirect(`/posts/1/preview`);
+    const newPost = await createPostService(title, content, currentUser?.id);
+
     return { data: newPost, status: 200 };
   } catch (error) {
     return {
@@ -58,7 +61,7 @@ export const updatePostAction = async (postId: number, formData: FormData) => {
   const { title, content } = validationResponse.body;
 
   try {
-    await updatePost(postId, title, content, currentUser.id);
+    await updatePostService(postId, title, content, currentUser.id);
     return { data: "post updated successfully", status: 200 };
   } catch (error: unknown) {
     const errorMessage =
@@ -82,7 +85,7 @@ export const deletePostAction = async (postId: number) => {
   }
 
   try {
-    const result = await deletePost(
+    const result = await deletePostService(
       postId,
       currentUser.id,
       currentUser.isAdmin

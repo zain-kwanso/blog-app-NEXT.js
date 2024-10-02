@@ -25,9 +25,23 @@ export const typeDefs = gql`
     posts: [Post]
     pagination: Pagination
   }
-
+  type MutationResponse {
+    success: Boolean!
+    message: String
+    post: Post
+  }
   type Query {
     posts(page: Int, limit: Int, search: String, userId: Int): PostResponse
     post(id: Int!): Post!
+  }
+
+  type Mutation {
+    createPost(title: String!, content: String!): MutationResponse!
+    deletePost(postId: Int!): MutationResponse!
+    updatePost(
+      postId: Int!
+      title: String!
+      content: String!
+    ): MutationResponse!
   }
 `;

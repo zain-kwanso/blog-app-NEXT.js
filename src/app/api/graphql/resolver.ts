@@ -1,8 +1,18 @@
 import {
+  createPostService,
+  deletePostService,
   getAllPosts,
   getPostsByUser,
   getPostService,
+  updatePostService,
 } from "@/services/postService";
+
+interface Context {
+  currentUser: {
+    id: number;
+    isAdmin: boolean;
+  } | null;
+}
 
 export const resolvers = {
   Query: {
@@ -46,6 +56,119 @@ export const resolvers = {
         return post;
       } catch (error) {
         throw new Error("Failed to fetch the post");
+      }
+    },
+  },
+
+  Mutation: {
+    // Mutation to create a post
+    createPost: async (
+      _parent: unknown,
+      { title, content }: { title: string; content: string },
+      context: Context
+    ) => {
+      const { currentUser } = context;
+
+      if (!currentUser) {
+        return {
+          success: false,
+          message: "User is not authenticated.",
+        };
+      }
+
+      try {
+        const newPost = await createPostService(title, content, currentUser.id);
+        return {
+          success: true,
+          message: "Post created successfully",
+          post: newPost,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to create the post",
+        };
+      }
+    },
+    // Mutation to update a post
+    updatePost: async (
+      _parent: unknown,
+      {
+        postId,
+        title,
+        content,
+      }: { postId: number; title: string; content: string },
+      context: Context
+    ) => {
+      const { currentUser } = context;
+
+      if (!currentUser) {
+        return {
+          success: false,
+          message: "User is not authenticated.",
+        };
+      }
+
+      try {
+        const updatedPost = await updatePostService(
+          postId,
+          title,
+          content,
+          currentUser.id
+        );
+        return {
+          success: true,
+          message: "Post updated successfully",
+          post: updatedPost,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to update the post",
+        };
+      }
+    },
+
+    // Mutation to delete a post
+    deletePost: async (
+      _parent: unknown,
+      { postId }: { postId: number },
+      context: Context
+    ) => {
+      const { currentUser } = context;
+
+      if (!currentUser) {
+        return {
+          success: false,
+          message: "User is not authenticated.",
+        };
+      }
+
+      try {
+        const result = await deletePostService(
+          postId,
+          currentUser.id,
+          currentUser.isAdmin
+        );
+
+        return {
+          success: true,
+          message: "Post deleted successfully!",
+        };
+      } catch (error) {
+        return {
+          success: false,
+          message:
+            error instanceof Error
+              ? error.message
+              : "Failed to delete the post.",
+        };
       }
     },
   },

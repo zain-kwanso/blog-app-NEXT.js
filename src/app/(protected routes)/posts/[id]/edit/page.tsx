@@ -9,10 +9,12 @@ import { PostFormData } from "../../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updatePostAction } from "@/app/actions/posts";
+import useUpdatePost from "@/hooks/useUpdatePost";
 
 const EditPostPage = ({ params }: { params: { id: string } }) => {
   const { fetchPost, post } = useFetchPost();
   const { navigateToPreviewPostPage } = useCustomNavigation();
+  const { updatePost, error } = useUpdatePost();
   const postId = parseInt(params.id, 10);
 
   const defaultPostValues: PostFormData = {
@@ -48,18 +50,19 @@ const EditPostPage = ({ params }: { params: { id: string } }) => {
 
   const onSubmit = async (data: PostFormData) => {
     clearErrors();
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("content", data.content);
 
     try {
-      const response = await updatePostAction(postId, formData);
+      // Update the post using the mutation
+      await updatePost(postId, data.title, data.content);
+
       navigateToPreviewPostPage(postId);
-      if (response.status === 200) {
-        toast.success("Post updated successfully!");
-      }
-    } catch (error) {
+      toast.success("Post updated successfully!");
+    } catch (err) {
       toast.error("An error occurred during post update");
+    }
+
+    if (error) {
+      console.error("Error updating post:", error);
     }
   };
 
