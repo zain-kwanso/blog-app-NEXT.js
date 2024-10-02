@@ -37,7 +37,7 @@ const CreatePostPage: React.FC = () => {
 
     try {
       const post = await createPostAction(formData);
-      navigateToPreviewPostPage(post?.data?.id);
+      navigateToPreviewPostPage(post?.data?.id!);
       toast.success("Post created successfully!");
     } catch (error) {
       toast.error("An error occurred during post creation");

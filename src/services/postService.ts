@@ -1,21 +1,23 @@
 import { Post, User } from "@/database/models/associations";
 import { Op } from "sequelize";
+import { PostResponse } from "../../@types/post";
 
 //create post service
 export const createPost = async (
   title: string,
   content: string,
   userId: number
-) => {
+): Promise<PostResponse> => {
   try {
     const newPost = await Post.create({
       title,
       content,
       UserId: userId,
     });
-    return newPost.toJSON();
+    return newPost.toJSON() as PostResponse;
   } catch (error) {
     console.log(error);
+    throw new Error("Error creating post");
   }
 };
 
