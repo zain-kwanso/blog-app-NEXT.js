@@ -10,6 +10,7 @@ export const typeDefs = gql`
     id: ID!
     title: String!
     content: String!
+    UserId: Int!
     User: User! # Assuming each post has a User
   }
 
@@ -20,12 +21,13 @@ export const typeDefs = gql`
     previousPage: Int
   }
 
-  type PostPagination {
+  type PostResponse {
     posts: [Post]
     pagination: Pagination
   }
 
   type Query {
-    posts(page: Int, limit: Int, search: String, userId: Int): PostPagination
+    posts(page: Int, limit: Int, search: String, userId: Int): PostResponse
+    post(id: Int!): Post!
   }
 `;

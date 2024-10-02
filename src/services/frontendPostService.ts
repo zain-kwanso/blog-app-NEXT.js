@@ -1,16 +1,29 @@
-import { PostResponse } from "../../@types/post";
-import { url, backend_url } from "@/utils/URL";
-import axios from "axios";
+// services/frontendPostService.ts
+import { gql } from "@apollo/client";
+import { createApolloClient } from "@/app/lib/apolloClient";
 
-const fetchPost = async (postId: number): Promise<PostResponse | null> => {
+// GraphQL query for fetching a single post
+const GET_POST_QUERY = gql`
+  query GetPost($id: Int!) {
+    post(id: $id) {
+      id
+      title
+      content
+    }
+  }
+`;
+
+const fetchPost = async (postId: number) => {
   try {
-    const response = await axios.get<PostResponse>(
-      backend_url + `${url.posts}/${postId}`
-    );
+    const client = createApolloClient();
+    const { data } = await client.query({
+      query: GET_POST_QUERY,
+      variables: { id: postId },
+    });
 
-    return response.data;
-  } catch (err) {
-    console.error("Failed to load post", err);
+    return data.post;
+  } catch (error) {
+    console.error("Failed to fetch post:", error);
     return null;
   }
 };

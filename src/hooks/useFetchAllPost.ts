@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pagination, PostResponse } from "../../@types/post";
-import { backend_url, url } from "@/utils/URL";
-import axiosInstance from "@/utils/axiosInstance";
+import { gql } from "@apollo/client";
+import { createApolloClient } from "@/app/lib/apolloClient";
 
 interface FetchPostsArgs {
   pageUrl?: string;
@@ -19,6 +19,29 @@ interface UseFetchAllPosts {
   fetchAllPosts: (args: FetchPostsArgs) => Promise<void>;
 }
 
+// Define your GraphQL query for fetching posts
+const GET_POSTS_QUERY = gql`
+  query GetPosts($page: Int, $limit: Int, $search: String, $userId: Int) {
+    posts(page: $page, limit: $limit, search: $search, userId: $userId) {
+      posts {
+        id
+        title
+        content
+        UserId
+        User {
+          name
+        }
+      }
+      pagination {
+        currentPage
+        totalPages
+        nextPage
+        previousPage
+      }
+    }
+  }
+`;
+
 const useFetchAllPosts = (): UseFetchAllPosts => {
   const [posts, setPosts] = useState<PostResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -30,37 +53,28 @@ const useFetchAllPosts = (): UseFetchAllPosts => {
     previousPageUrl: null,
   });
 
+  // Function to fetch posts
   const fetchAllPosts = async ({
-    pageUrl = url.posts,
     page = 1,
     limit = 10,
     search = "",
     userId = null,
   }: FetchPostsArgs): Promise<void> => {
-    setError("");
     setLoading(true);
+    setError("");
     setPosts([]);
 
     try {
-      let response;
-      if (userId === null) {
-        response = await axiosInstance.get(
-          `${pageUrl}?page=${page}&limit=${limit}&search=${search}`
-        );
-      } else {
-        response = await axiosInstance.get(
-          `${pageUrl}?page=${page}&limit=${limit}&search=${search}&userId=${userId}`
-        );
-      }
-
-      const data = response.data;
-      setPosts(data.posts);
-      setPagination({
-        currentPage: data.pagination.currentPage,
-        totalPages: data.pagination.totalPages,
-        nextPageUrl: data.pagination.nextPage,
-        previousPageUrl: data.pagination.previousPage,
+      const client = createApolloClient();
+      const { data } = await client.query({
+        query: GET_POSTS_QUERY,
+        variables: { page, limit, search, userId },
       });
+
+      const { posts, pagination } = data?.posts;
+
+      setPosts(posts);
+      setPagination(pagination);
     } catch (err) {
       setError("Failed to fetch posts");
     } finally {

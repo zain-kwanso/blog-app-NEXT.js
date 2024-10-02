@@ -1,7 +1,7 @@
-import { Post, PostResponse } from "../../@types/post";
-import { url } from "@/utils/URL";
+import { Post } from "../../@types/post"; // Assuming this defines the Post type
 import { useState } from "react";
-import axiosInstance from "@/utils/axiosInstance";
+import { gql } from "@apollo/client"; // Apollo Client imports
+import { createApolloClient } from "@/app/lib/apolloClient";
 
 interface UseFetchPost {
   fetchPost: (postId: number) => Promise<void>;
@@ -9,6 +9,17 @@ interface UseFetchPost {
   loading: boolean;
   error: string;
 }
+
+// GraphQL query to fetch a single post
+const GET_POST_QUERY = gql`
+  query GetPost($id: Int!) {
+    post(id: $id) {
+      id
+      title
+      content
+    }
+  }
+`;
 
 const useFetchPost = (): UseFetchPost => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,11 +29,16 @@ const useFetchPost = (): UseFetchPost => {
   const fetchPost = async (postId: number): Promise<void> => {
     setLoading(true);
     setError("");
+
     try {
-      const response = await axiosInstance.get<PostResponse>(
-        `${url.posts}/${postId}`
-      );
-      setPost(response.data);
+      const client = createApolloClient();
+      const { data } = await client.query({
+        query: GET_POST_QUERY,
+        variables: { id: postId },
+      });
+
+      // Set the post data received from GraphQL
+      setPost(data.post);
     } catch (err) {
       setError("Failed to load post");
     } finally {

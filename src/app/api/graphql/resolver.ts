@@ -1,4 +1,8 @@
-import { getAllPosts, getPostsByUser } from "@/services/postService";
+import {
+  getAllPosts,
+  getPostsByUser,
+  getPostService,
+} from "@/services/postService";
 
 export const resolvers = {
   Query: {
@@ -28,6 +32,20 @@ export const resolvers = {
         };
       } catch (error) {
         throw new Error("Failed to fetch posts");
+      }
+    },
+
+    // Resolver for fetching a single post
+
+    post: async (_parent: unknown, { id }: { id: number }) => {
+      try {
+        const post = await getPostService(id);
+        if (!post) {
+          throw new Error("Post not found");
+        }
+        return post;
+      } catch (error) {
+        throw new Error("Failed to fetch the post");
       }
     },
   },
