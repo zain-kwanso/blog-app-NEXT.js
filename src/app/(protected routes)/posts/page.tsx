@@ -4,7 +4,6 @@ import { GET_POSTS_QUERY } from "@/utils/qeuries";
 // This is a Server Component
 export default async function PostsPage() {
   const client = createApolloClient();
-
   const { data } = await client.query({
     query: GET_POSTS_QUERY,
     variables: {

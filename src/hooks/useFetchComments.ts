@@ -1,5 +1,5 @@
 import { useState } from "react";
-import client from "@/lib/apolloClient";
+import { createApolloClient } from "@/lib/apolloClient";
 import { CommentResponse } from "../../@types/comment";
 import { GET_COMMENTS_QUERY } from "@/utils/qeuries";
 
@@ -13,6 +13,7 @@ const useFetchComments = () => {
     setError("");
 
     try {
+      const client = createApolloClient();
       const { data } = await client.query({
         query: GET_COMMENTS_QUERY,
         variables: { postId },
