@@ -7,7 +7,6 @@ import { postValidationSchema } from "@/validation/validationSchema";
 import { PostFormData } from "../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createPostAction } from "@/app/actions/posts";
 import useCreatePost from "@/hooks/useCreatePost";
 
 const CreatePostPage: React.FC = () => {

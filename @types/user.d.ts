@@ -23,4 +23,8 @@ export interface UserResponse extends User {
   profilePictureUrl: string;
 }
 
+export interface Context {
+  currentUser: UserResponse | null;
+}
+
 export type UserInstanceType = data<UserType, UserCreationAttributes>;

@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
-import { url } from "@/utils/URL";
-import axiosInstance from "@/utils/axiosInstance";
-import { verifyEmailAction } from "@/app/actions/auth";
+import { verifyEmailAction } from "@/actions/auth";
 
 export const verifyEmailRequest = async (token: string) => {
   try {

@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { signupValidationSchema } from "@/validation/validationSchema";
 import { UserCreationAttributes } from "../../../@types/user";
-import { signupAction } from "@/app/actions/auth";
+import { signupAction } from "@/actions/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const SignupForm: React.FC = (): React.JSX.Element => {

@@ -1,6 +1,4 @@
-// services/frontendPostService.ts
-import { gql } from "@apollo/client";
-import { createApolloClient } from "@/app/lib/apolloClient";
+import { createApolloClient } from "@/lib/apolloClient";
 import { GET_POST_QUERY } from "@/utils/qeuries";
 
 const fetchPost = async (postId: number) => {

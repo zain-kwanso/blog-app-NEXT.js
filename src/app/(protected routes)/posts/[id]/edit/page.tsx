@@ -8,7 +8,6 @@ import useFetchPost from "@/hooks/useFetchPost";
 import { PostFormData } from "../../../../../../@types/post";
 import useCustomNavigation from "@/hooks/useCustomNavigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updatePostAction } from "@/app/actions/posts";
 import useUpdatePost from "@/hooks/useUpdatePost";
 
 const EditPostPage = ({ params }: { params: { id: string } }) => {

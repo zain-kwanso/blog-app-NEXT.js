@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 // import { setupAxiosInterceptors } from "@/utils/axiosInstance";
-import { logout } from "@/app/actions/auth";
+import { logout } from "@/actions/auth";
 
 const ClientInterceptorSetup = () => {
   // useEffect(() => {

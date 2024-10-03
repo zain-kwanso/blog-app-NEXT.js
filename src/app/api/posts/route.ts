@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllPosts, getPostsByUser } from "@/services/postService";
-import { getCurrentUser } from "@/app/actions/auth";
+import { getCurrentUser } from "@/actions/auth";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

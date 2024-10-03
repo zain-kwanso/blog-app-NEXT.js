@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Pagination, PostResponse } from "../../@types/post";
-import { gql } from "@apollo/client";
-import { createApolloClient } from "@/app/lib/apolloClient";
+import client from "@/lib/apolloClient";
 import { GET_POSTS_QUERY } from "@/utils/qeuries";
 
 interface FetchPostsArgs {
@@ -43,7 +42,6 @@ const useFetchAllPosts = (): UseFetchAllPosts => {
     setPosts([]);
 
     try {
-      const client = createApolloClient();
       const { data } = await client.query({
         query: GET_POSTS_QUERY,
         variables: { page, limit, search, userId },

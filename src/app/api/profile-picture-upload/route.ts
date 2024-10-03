@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadFileToS3, generatePresignedUrl } from "@/services/s3Service";
 import User from "@/database/models/user.model";
-import { getCurrentUser } from "@/app/actions/auth";
+import { getCurrentUser } from "@/actions/auth";
 
 export async function POST(req: NextRequest) {
   const currentUser = await getCurrentUser();

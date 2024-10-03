@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { deleteUserAction } from "@/app/actions/users";
+import { deleteUserAction } from "@/actions/users";
 
 const useDeleteUser = () => {
   const [loading, setLoading] = useState(false);

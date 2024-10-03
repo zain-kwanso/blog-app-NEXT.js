@@ -5,8 +5,8 @@ import React, { createContext, useState, useEffect } from "react";
 import { UserResponse } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
 
-import { getCurrentUser, logout } from "@/app/actions/auth";
-import { signinAction } from "@/app/actions/auth";
+import { getCurrentUser, logout } from "@/actions/auth";
+import { signinAction } from "@/actions/auth";
 
 const initialAuthContext: AuthContextType = {
   user: null,

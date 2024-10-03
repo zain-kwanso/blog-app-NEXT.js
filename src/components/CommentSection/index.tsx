@@ -7,10 +7,8 @@ import useFetchComments from "@/hooks/useFetchComments";
 import CommentSkeleton from "../CommentSkeleton";
 import { AuthContext } from "@/context/authContext";
 import { toast } from "react-toastify";
-import {
-  createCommentAction,
-  deleteCommentAction,
-} from "@/app/actions/comment";
+import { createCommentAction, deleteCommentAction } from "@/actions/comment";
+import useCreateComment from "@/hooks/useCreateComment";
 
 interface CommentsSectionProps {
   postId: number;
@@ -23,6 +21,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   const [replyError, setReplyError] = useState<ReplyComment>({});
 
   const { fetchComments, comments, loading, error } = useFetchComments();
+  const { createComment } = useCreateComment();
 
   const { user } = useContext(AuthContext);
 
@@ -33,14 +32,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   const handleAddComment = async (content: string) => {
     if (content.trim() === "") return;
     try {
-      const response = await createCommentAction(content, postId);
-
-      if (response.status === 200) {
+      const response = await createComment(content, postId);
+      if (response.success) {
         fetchComments(postId);
-        toast.success("comment added successfully.");
+        toast.success("Comment added successfully.");
       } else {
-        console.error(response?.error);
-        toast.error("Failed to add comments.");
+        toast.error(response.message);
       }
     } catch (error) {
       console.error("Error adding comment:", error);
@@ -70,29 +67,29 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   ) => {
     if (replyComment[parentId]?.trim() === "") return;
     try {
-      const response = await createCommentAction(
+      // const parsedParentId = parseInt(parentId, 10);
+      const response = await createComment(
         replyComment[parentId]!,
         postId,
         parentId
       );
-      if (response.status === 200) {
-        fetchComments(postId);
-        toast.success("comment added successfully.");
+      if (response.success) {
+        fetchComments(postId); // Refetch comments after adding
+        toast.success("Reply added successfully.");
       } else {
-        console.error(response?.error);
-        toast.error("Failed to add comments.");
+        toast.error(response.message);
       }
     } catch (error) {
       console.error("Error adding reply:", error);
-      toast.error("ailed to add reply.");
+      toast.error("Failed to add reply.");
     }
   };
 
   const handleReplyChange = (parentId: number, value: string) => {
-    if (value.length > 255) {
+    if (value.length > 100) {
       setReplyError((prev) => ({
         ...prev,
-        [parentId]: "Reply cannot exceed 255 characters",
+        [parentId]: "Reply cannot exceed 100 characters",
       }));
     } else if (value.trim() === "") {
       setReplyError((prev) => ({
@@ -109,8 +106,8 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   };
 
   const handleCommentChange = (value: string) => {
-    if (value.length > 255) {
-      setNewCommentError("Comment cannot exceed 255 characters");
+    if (value.length > 100) {
+      setNewCommentError("Comment cannot exceed 100 characters");
     } else if (value.trim() === "") {
       setNewCommentError("Comment cannot be empty");
     } else {

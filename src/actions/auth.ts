@@ -1,6 +1,6 @@
 "use server";
 
-import { createSession, deleteSession } from "@/app/lib/session";
+import { createSession, deleteSession } from "@/lib/session";
 import { signinService } from "@/services/authService";
 import { signupService } from "@/services/authService";
 import { sendVerificationEmail } from "@/services/emailService";
@@ -11,7 +11,7 @@ import {
 import { generatePresignedUrl } from "@/services/s3Service";
 import User from "@/database/models/user.model";
 import { verifySession } from "../lib/dal";
-import { UserResponse } from "../../../@types/user";
+import { UserResponse } from "../../@types/user";
 import { validateFormData } from "@/validation/validateData";
 import { routeUrl } from "@/utils/pageRoutes";
 import { redirect } from "next/navigation";

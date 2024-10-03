@@ -1,22 +1,24 @@
 import { useState } from "react";
-
+import client from "@/lib/apolloClient";
 import { CommentResponse } from "../../@types/comment";
-import { url } from "@/utils/URL";
-import axiosInstance from "@/utils/axiosInstance";
+import { GET_COMMENTS_QUERY } from "@/utils/qeuries";
 
 const useFetchComments = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
   const [comments, setComments] = useState<CommentResponse>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const fetchComments = async (postId: number): Promise<void> => {
     setLoading(true);
     setError("");
+
     try {
-      const response = await axiosInstance.get<CommentResponse>(
-        url.posts + `/${postId}/comments`
-      );
-      setComments(response.data);
+      const { data } = await client.query({
+        query: GET_COMMENTS_QUERY,
+        variables: { postId },
+      });
+
+      setComments(data?.postComments || []);
     } catch (err) {
       setError("Failed to load comments");
     } finally {

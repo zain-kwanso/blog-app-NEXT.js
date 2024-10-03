@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { decrypt } from "@/app/lib/session";
+import { decrypt } from "@/lib/session";
 import { cache } from "react"; //check cache
 
 export const verifySession = async () => {

@@ -1,40 +1,17 @@
-import { createApolloClient } from "@/app/lib/apolloClient";
-import { gql } from "@apollo/client";
-
-// Update the GraphQL query to include the user's name
-const GET_POSTS = gql`
-  query GetPosts($page: Int, $limit: Int, $search: String, $userId: Int) {
-    posts(page: $page, limit: $limit, search: $search, userId: $userId) {
-      posts {
-        id
-        title
-        content
-        User {
-          name
-        }
-      }
-      pagination {
-        currentPage
-        totalPages
-        nextPage
-        previousPage
-      }
-    }
-  }
-`;
+import { createApolloClient } from "@/lib/apolloClient";
+import { GET_POSTS_QUERY } from "@/utils/qeuries";
 
 // This is a Server Component
 export default async function PostsPage() {
-  const client = createApolloClient(); // Create an Apollo Client for SSR
+  const client = createApolloClient();
 
-  // Fetch data using Apollo Client on the server
   const { data } = await client.query({
-    query: GET_POSTS,
+    query: GET_POSTS_QUERY,
     variables: {
-      page: 1, // Default to page 1
-      limit: 10, // Limit to 10 posts per page
-      search: "", // No search query
-      userId: null, // No specific user
+      page: 1,
+      limit: 10,
+      search: "",
+      userId: null,
     },
   });
 

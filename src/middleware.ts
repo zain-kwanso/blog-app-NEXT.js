@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getCurrentUser } from "./app/actions/auth";
+import { getCurrentUser } from "./actions/auth";
 
 const publicNoSessionRoutes = ["/login", "/signup", "/verify-email"];
 const privateSessionRoutes = ["/posts/create", "/admin"];

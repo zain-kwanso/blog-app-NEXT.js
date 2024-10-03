@@ -1,19 +1,6 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Post } from "../../@types/post";
-
-const CREATE_POST_MUTATION = gql`
-  mutation CreatePost($title: String!, $content: String!) {
-    createPost(title: $title, content: $content) {
-      success
-      message
-      post {
-        id
-        title
-        content
-      }
-    }
-  }
-`;
+import { CREATE_POST_MUTATION } from "@/utils/mutations";
 
 const useCreatePost = () => {
   const [createPostMutation, { loading, error }] =

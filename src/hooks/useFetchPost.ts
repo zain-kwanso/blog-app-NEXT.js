@@ -1,7 +1,7 @@
 import { Post } from "../../@types/post";
 import { useState } from "react";
-import { createApolloClient } from "@/app/lib/apolloClient";
 import { GET_POST_QUERY } from "@/utils/qeuries";
+import client from "@/lib/apolloClient";
 
 interface UseFetchPost {
   fetchPost: (postId: number) => Promise<void>;
@@ -20,7 +20,6 @@ const useFetchPost = (): UseFetchPost => {
     setError("");
 
     try {
-      const client = createApolloClient();
       const { data } = await client.query({
         query: GET_POST_QUERY,
         variables: { id: postId },

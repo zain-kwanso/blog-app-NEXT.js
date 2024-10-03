@@ -1,5 +1,5 @@
-import { getCurrentUser } from "@/app/actions/auth";
-import { fetchUsersAction } from "@/app/actions/users";
+import { getCurrentUser } from "@/actions/auth";
+import { fetchUsersAction } from "@/actions/users";
 import DeleteButton from "@/components/DeleteButton";
 import { UserType } from "../../../../@types/user";
 

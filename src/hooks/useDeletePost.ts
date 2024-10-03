@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { DELETE_POST_MUTATION } from "@/utils/mutations";
 
 const useDeletePost = () => {

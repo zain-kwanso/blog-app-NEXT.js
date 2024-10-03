@@ -1,19 +1,6 @@
 // src/hooks/useUpdatePost.ts
+import { UPDATE_POST_MUTATION } from "@/utils/mutations";
 import { gql, useMutation } from "@apollo/client";
-
-const UPDATE_POST_MUTATION = gql`
-  mutation UpdatePost($postId: Int!, $title: String!, $content: String!) {
-    updatePost(postId: $postId, title: $title, content: $content) {
-      success
-      message
-      post {
-        id
-        title
-        content
-      }
-    }
-  }
-`;
 
 const useUpdatePost = () => {
   const [updatePostMutation, { loading, error }] =

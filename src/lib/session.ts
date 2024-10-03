@@ -2,7 +2,7 @@
 
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { SessionPayload } from "../../../@types/module";
+import { SessionPayload } from "../../@types/module";
 
 export async function createSession(userId: number) {
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);

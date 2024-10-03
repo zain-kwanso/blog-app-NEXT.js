@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ClientHeader from "@/components/ClientHeader";
 import ClientInterceptorSetup from "@/components/responseInterceptor";
 import { ApolloProvider } from "@apollo/client";
-import { createApolloClient } from "./lib/apolloClient";
+import client from "../lib/apolloClient";
 
 export default function RootLayout({
   children,
@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <ApolloProvider client={createApolloClient()}>
+          <ApolloProvider client={client}>
             <div className="flex flex-col min-h-screen h-full justify-between relative">
               <ClientInterceptorSetup />
               <ClientHeader />

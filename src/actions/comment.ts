@@ -4,7 +4,7 @@ import {
   createCommentService,
   deleteCommentService,
 } from "@/services/commentService";
-import { getCurrentUser } from "@/app/actions/auth";
+import { getCurrentUser } from "@/actions/auth";
 
 // create comment server action
 export const createCommentAction = async (

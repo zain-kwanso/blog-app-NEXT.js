@@ -31,3 +31,26 @@ export const GET_POSTS_QUERY = gql`
     }
   }
 `;
+
+export const GET_COMMENTS_QUERY = gql`
+  query GetPostComments($postId: Int!) {
+    postComments(postId: $postId) {
+      id
+      content
+      createdAt
+      User {
+        name
+        profilePictureUrl
+      }
+      replies {
+        id
+        content
+        createdAt
+        User {
+          name
+          profilePictureUrl
+        }
+      }
+    }
+  }
+`;
