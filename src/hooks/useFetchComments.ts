@@ -1,22 +1,24 @@
 import { useState } from "react";
-import { createApolloClient } from "@/lib/apolloClient";
 import { CommentResponse } from "../../@types/comment";
 import { GET_COMMENTS_QUERY } from "@/utils/qeuries";
+import { useQuery } from "@apollo/client";
 
 const useFetchComments = () => {
   const [comments, setComments] = useState<CommentResponse>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const { refetch } = useQuery(GET_COMMENTS_QUERY, {
+    variables: { postId: 1 },
+    skip: true,
+  });
 
   const fetchComments = async (postId: number): Promise<void> => {
     setLoading(true);
     setError("");
 
     try {
-      const client = createApolloClient();
-      const { data } = await client.query({
-        query: GET_COMMENTS_QUERY,
-        variables: { postId },
+      const { data } = await refetch({
+        postId,
       });
 
       setComments(data?.postComments || []);

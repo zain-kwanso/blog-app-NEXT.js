@@ -7,6 +7,8 @@ import { signupValidationSchema } from "@/validation/validationSchema";
 import { UserCreationAttributes } from "../../../@types/user";
 import { signupAction } from "@/actions/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@apollo/client";
+import { SIGNUP_MUTATION } from "@/utils/mutations";
 
 const SignupForm: React.FC = (): React.JSX.Element => {
   const defaultSignupValues: UserCreationAttributes = {
@@ -14,6 +16,7 @@ const SignupForm: React.FC = (): React.JSX.Element => {
     email: "",
     password: "",
   };
+  const [signup] = useMutation(SIGNUP_MUTATION);
 
   const {
     register,
@@ -27,12 +30,15 @@ const SignupForm: React.FC = (): React.JSX.Element => {
 
   const onSubmit: SubmitHandler<UserCreationAttributes> = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("email", data.email);
-      formData.append("password", data.password);
+      const response = await signup({
+        variables: {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        },
+      });
 
-      const result = await signupAction(formData);
+      const result = response.data.signup;
 
       if (result?.status === 200) {
         toast.success("Verification Email Sent Successfully.");
@@ -40,11 +46,12 @@ const SignupForm: React.FC = (): React.JSX.Element => {
         toast.error("User already exists. Please log in.");
       } else {
         toast.error(
-          result?.error || "An error occurred. Please try again later."
+          result?.message || "An error occurred. Please try again later."
         );
       }
-    } catch (error) {
+    } catch (err) {
       toast.error("An unexpected error occurred.");
+      console.error("Signup error:", err);
     }
   };
 

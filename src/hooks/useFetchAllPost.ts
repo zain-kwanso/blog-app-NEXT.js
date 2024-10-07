@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useQuery } from "@apollo/client";
 import { Pagination, PostResponse } from "../../@types/post";
-import { createApolloClient } from "@/lib/apolloClient";
+import { useState } from "react";
 import { GET_POSTS_QUERY } from "@/utils/qeuries";
 
 interface FetchPostsArgs {
@@ -16,7 +16,7 @@ interface UseFetchAllPosts {
   loading: boolean;
   error: string;
   pagination: Pagination;
-  fetchAllPosts: (args: FetchPostsArgs) => Promise<void>;
+  fetchAllPosts: (args: FetchPostsArgs) => void;
 }
 
 const useFetchAllPosts = (): UseFetchAllPosts => {
@@ -30,7 +30,11 @@ const useFetchAllPosts = (): UseFetchAllPosts => {
     previousPageUrl: null,
   });
 
-  // Function to fetch posts
+  const { refetch } = useQuery(GET_POSTS_QUERY, {
+    variables: { page: 1, limit: 10, search: "", userId: null },
+    skip: true,
+  });
+
   const fetchAllPosts = async ({
     page = 1,
     limit = 10,
@@ -42,16 +46,18 @@ const useFetchAllPosts = (): UseFetchAllPosts => {
     setPosts([]);
 
     try {
-      const client = createApolloClient();
-      const { data } = await client.query({
-        query: GET_POSTS_QUERY,
-        variables: { page, limit, search, userId },
+      const { data } = await refetch({
+        page,
+        limit,
+        search,
+        userId,
       });
 
-      const { posts, pagination } = data?.posts;
+      const { posts: fetchedPosts, pagination: fetchedPagination } =
+        data?.posts;
 
-      setPosts(posts);
-      setPagination(pagination);
+      setPosts(fetchedPosts);
+      setPagination(fetchedPagination);
     } catch (err) {
       setError("Failed to fetch posts");
     } finally {

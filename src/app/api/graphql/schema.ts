@@ -1,10 +1,14 @@
 import { gql } from "graphql-tag";
 
 export const typeDefs = gql`
+  scalar Upload
+
   type User {
     id: ID!
     name: String!
     profilePictureUrl: String
+    email: String
+    verificationTime: String
   }
 
   type Post {
@@ -47,6 +51,19 @@ export const typeDefs = gql`
     message: String
     post: Post
     comment: Comment
+    fileUrl: String
+  }
+  type SignupResponse {
+    success: Boolean!
+    message: String
+    status: Int
+  }
+
+  type SigninResponse {
+    success: Boolean!
+    message: String
+    status: Int
+    user: User
   }
 
   type Query {
@@ -70,5 +87,8 @@ export const typeDefs = gql`
       parentId: Int
     ): MutationResponse!
     deleteComment(commentId: Int!): MutationResponse!
+
+    signin(email: String!, password: String!): SigninResponse!
+    signup(email: String!, name: String!, password: String!): SignupResponse!
   }
 `;

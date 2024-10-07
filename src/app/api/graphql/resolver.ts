@@ -1,3 +1,4 @@
+import { signinResolver, signupResolver } from "@/resolvers/auth";
 import {
   createCommentResolver,
   deleteCommentResolver,
@@ -27,5 +28,9 @@ export const resolvers = {
     // Comments
     createComment: createCommentResolver,
     deleteComment: deleteCommentResolver,
+
+    //signin
+    signin: signinResolver,
+    signup: signupResolver,
   },
 };

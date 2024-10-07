@@ -4,9 +4,9 @@ import React, { createContext, useState, useEffect } from "react";
 
 import { UserResponse } from "../../@types/user";
 import { AuthContextType } from "../../@types/context";
-
-import { getCurrentUser, logout } from "@/actions/auth";
-import { signinAction } from "@/actions/auth";
+import { getCurrentUser, logout, signinAction } from "@/actions/auth";
+import { createApolloClient } from "@/lib/apolloClient";
+import { SIGNIN_MUTATION } from "@/utils/mutations";
 
 const initialAuthContext: AuthContextType = {
   user: null,
@@ -59,20 +59,25 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Sign in function
   const signin = async (email: string, password: string): Promise<number> => {
     try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-      const response = await signinAction(formData);
+      const client = createApolloClient();
+      const { data } = await client.mutate({
+        mutation: SIGNIN_MUTATION,
+        variables: { email, password },
+      });
 
-      if (response.status) {
+      if (data.signin.success || data.signin.status === 401) {
         await fetchUser();
-        return response.status;
+        return data.signin.status;
+      } else {
+        console.error("Sign-in error:", data.signin.message);
+        throw new Error(data.signin.message);
       }
     } catch (error) {
       console.error("Sign-in error:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
-    return 200;
   };
 
   // Sign out function

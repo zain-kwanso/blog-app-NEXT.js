@@ -54,3 +54,27 @@ export const CREATE_COMMENT_MUTATION = gql`
     }
   }
 `;
+
+export const SIGNIN_MUTATION = gql`
+  mutation Signin($email: String!, $password: String!) {
+    signin(email: $email, password: $password) {
+      success
+      message
+      status
+      user {
+        id
+        email
+      }
+    }
+  }
+`;
+
+export const SIGNUP_MUTATION = gql`
+  mutation Signup($email: String!, $name: String!, $password: String!) {
+    signup(email: $email, name: $name, password: $password) {
+      success
+      message
+      status
+    }
+  }
+`;
